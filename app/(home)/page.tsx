@@ -1,4 +1,5 @@
 import CategoriesSection from "@/components/CategoriesSection";
+import Footer from "@/components/Footer";
 import HeroSlider from "@/components/HeroSlider";
 import Navbar from "@/components/Navbar";
 import OurProductsSection from "@/components/OurProductsSection";
@@ -13,6 +14,7 @@ const HomePage = () => {
       <CategoriesSection />
       <OurProductsSection />
       <ValueForMoneySection />
+      <Footer/>
     </main>
   );
 };
