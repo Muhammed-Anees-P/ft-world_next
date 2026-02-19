@@ -7,10 +7,11 @@ import {
   Search,
   User,
   ShoppingCart,
-  MoreHorizontal,
   Bell,
   Menu,
   X,
+  ChevronRight,
+  MenuIcon,
 } from "lucide-react";
 import Container from "./Container";
 
@@ -48,31 +49,43 @@ export default function Navbar() {
 
         {/* Desktop Right Buttons */}
         <div className="hidden md:flex items-center gap-4">
+          {/* LOGIN */}
           <Link
             href="#"
-            className="flex items-center gap-2 bg-[#542452] text-white px-5 py-2 rounded-full text-sm font-medium hover:opacity-90 transition"
+            className="flex items-center bg-[#5B2758] rounded-full pl-1 pr-5 py-2 text-white text-sm font-medium hover:opacity-95 transition h-10"
           >
-            <User size={16} />
-            Login
+            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-linear-to-br from-[#7A2E7A] to-[#C53BD2] mr-3">
+              <User size={16} className="text-white" />
+            </div>
+            <span className="mr-2">Login</span>
+            <ChevronRight size={16} className="text-white" />
           </Link>
 
+          {/* CART */}
           <Link
             href="#"
-            className="flex items-center gap-2 bg-[#542452] text-white px-5 py-2 rounded-full text-sm font-medium hover:opacity-90 transition"
+            className="flex items-center bg-[#5B2758] rounded-full pl-1 pr-5 py-2 text-white text-sm font-medium hover:opacity-95 transition h-10"
           >
-            <ShoppingCart size={16} />
+            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-linear-to-br from-[#7A2E7A] to-[#C53BD2] mr-3">
+              <ShoppingCart size={16} className="text-white" />
+            </div>
             Cart
           </Link>
 
+          {/* MORE */}
           <Link
             href="#"
-            className="flex items-center gap-2 bg-[#542452] text-white px-5 py-2 rounded-full text-sm font-medium hover:opacity-90 transition"
+            className="flex items-center bg-[#5B2758] rounded-full pl-1 pr-5 py-2 text-white text-sm font-medium hover:opacity-95 transition h-10"
           >
-            <MoreHorizontal size={16} />
-            More
+            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-linear-to-br from-[#7A2E7A] to-[#C53BD2] mr-3">
+              <MenuIcon size={16} className="text-white" />
+            </div>
+            <span className="mr-2">More</span>
+            <ChevronRight size={16} className="text-white" />
           </Link>
 
-          <button className="bg-[#542452] text-white p-2.5 rounded-full hover:opacity-90 transition">
+          {/* NOTIFICATION */}
+          <button className="bg-[#5B2758] text-white p-2.5 rounded-full hover:opacity-95 transition">
             <Bell size={18} />
           </button>
         </div>
@@ -126,7 +139,7 @@ export default function Navbar() {
               href="#"
               className="flex items-center gap-2 text-[#542452] py-2"
             >
-              <MoreHorizontal size={18} />
+              <MenuIcon size={18} />
               More
             </Link>
           </Container>
