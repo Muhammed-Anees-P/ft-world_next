@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -17,6 +17,43 @@ import Container from "./Container";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
+
+  const placeholders = [
+    "Search Products...",
+    "Search Brands...",
+    "Search Electronics...",
+  ];
+
+  const [currentText, setCurrentText] = useState("");
+  const [index, setIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    if (searchText) return;
+
+    const fullText = placeholders[index];
+    let typingSpeed = isDeleting ? 40 : 80;
+
+    const timeout = setTimeout(() => {
+      if (!isDeleting) {
+        setCurrentText(fullText.substring(0, currentText.length + 1));
+
+        if (currentText === fullText) {
+          setTimeout(() => setIsDeleting(true), 1000);
+        }
+      } else {
+        setCurrentText(fullText.substring(0, currentText.length - 1));
+
+        if (currentText === "") {
+          setIsDeleting(false);
+          setIndex((prev) => (prev + 1) % placeholders.length);
+        }
+      }
+    }, typingSpeed);
+
+    return () => clearTimeout(timeout);
+  }, [currentText, isDeleting, index, searchText]);
 
   return (
     <nav className="w-full bg-[#FFFFFF] shadow-sm">
@@ -41,9 +78,17 @@ export default function Navbar() {
             />
             <input
               type="text"
-              placeholder="Search Products, brands and more"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
               className="w-full pl-12 pr-4 py-2.5 rounded-full border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#542452]"
             />
+
+            {!searchText && (
+              <span className="absolute left-12 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">
+                {currentText}
+                <span className="animate-blink">|</span>
+              </span>
+            )}
           </div>
         </div>
 
@@ -78,7 +123,7 @@ export default function Navbar() {
             className="flex items-center bg-[#5B2758] rounded-full pl-1 pr-5 py-2 text-white text-sm font-medium hover:opacity-95 transition h-10"
           >
             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-linear-to-br from-[#7A2E7A] to-[#C53BD2] mr-3">
-              <MenuIcon size={16} className="text-white" />
+              <MenuIcon size={16} />
             </div>
             <span className="mr-2">More</span>
             <ChevronRight size={16} className="text-white" />
@@ -86,7 +131,24 @@ export default function Navbar() {
 
           {/* NOTIFICATION */}
           <button className="bg-[#5B2758] text-white p-2.5 rounded-full hover:opacity-95 transition">
-            <Bell size={18} />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M10.268 21a2 2 0 0 0 3.464 0" />
+              <path d="M11.68 2.009A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673c-.824-.85-1.678-1.731-2.21-3.348" />
+
+              <circle cx="18" cy="5" r="4" fill="white" />
+
+              <circle cx="18" cy="5" r="3.5" fill="red" />
+            </svg>
           </button>
         </div>
 
@@ -145,6 +207,24 @@ export default function Navbar() {
           </Container>
         </div>
       )}
+
+      <style jsx>{`
+        .animate-blink {
+          animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+          0%,
+          50%,
+          100% {
+            opacity: 1;
+          }
+          25%,
+          75% {
+            opacity: 0;
+          }
+        }
+      `}</style>
     </nav>
   );
 }
