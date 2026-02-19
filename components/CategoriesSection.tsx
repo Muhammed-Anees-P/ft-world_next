@@ -29,7 +29,7 @@ export default function CategoriesSection() {
   };
 
   return (
-    <section className="w-full bg-[#f3f3f3] py-12">
+    <section className="w-full  bg-[#FFFFFF]  py-12">
       <Container>
         {/* Title */}
         <h2 className="text-2xl font-semibold mb-8">Categories</h2>

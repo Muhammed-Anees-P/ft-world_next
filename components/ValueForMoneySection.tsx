@@ -28,7 +28,7 @@ const products = [
 
 export default function ValueForMoneySection() {
   return (
-    <section className="w-full bg-[#f3f3f3] py-20">
+    <section className="w-full  bg-[#FFFFFF]  py-20">
       <Container>
         <h2 className="text-2xl md:text-3xl font-semibold mb-14">
           Value For Money
