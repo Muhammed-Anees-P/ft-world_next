@@ -76,13 +76,13 @@ export default function HeroSlider() {
         </button>
 
         {/* Dots */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
           {images.map((_, index) => (
             <div
               key={index}
               onClick={() => setCurrent(index)}
-              className={`w-3 h-3 rounded-full cursor-pointer transition ${
-                current === index ? "bg-white scale-110" : "bg-white/50"
+              className={`h-1 rounded-full cursor-pointer transition-all duration-300 ${
+                current === index ? "w-8 bg-white" : "w-3 bg-white/40"
               }`}
             />
           ))}
