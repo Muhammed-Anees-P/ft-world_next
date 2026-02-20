@@ -18,7 +18,6 @@ export default function Footer() {
       <Container>
         {/* Top Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-
           {/* Logo & About */}
           <div className="space-y-6">
             {/* Logo Image */}
@@ -38,10 +37,22 @@ export default function Footer() {
             </p>
 
             <div className="flex gap-4 text-gray-700">
-              <Facebook size={18} className="hover:text-black cursor-pointer transition" />
-              <Instagram size={18} className="hover:text-black cursor-pointer transition" />
-              <Twitter size={18} className="hover:text-black cursor-pointer transition" />
-              <Linkedin size={18} className="hover:text-black cursor-pointer transition" />
+              <Facebook
+                size={18}
+                className="hover:text-black cursor-pointer transition"
+              />
+              <Instagram
+                size={18}
+                className="hover:text-black cursor-pointer transition"
+              />
+              <Twitter
+                size={18}
+                className="hover:text-black cursor-pointer transition"
+              />
+              <Linkedin
+                size={18}
+                className="hover:text-black cursor-pointer transition"
+              />
             </div>
           </div>
 
@@ -49,12 +60,24 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold mb-4">QUICK LINKS</h3>
             <ul className="space-y-2 text-sm text-gray-800">
-              <li><Link href="#">Home</Link></li>
-              <li><Link href="/about">About Us</Link></li>
-              <li><Link href="#">Products</Link></li>
-              <li><Link href="#">Categories</Link></li>
-              <li><Link href="#">Offers</Link></li>
-              <li><Link href="#">Contact Us</Link></li>
+              <li>
+                <Link href="#">Home</Link>
+              </li>
+              <li>
+                <Link href="/about">About Us</Link>
+              </li>
+              <li>
+                <Link href="/product">Products</Link>
+              </li>
+              <li>
+                <Link href="#">Categories</Link>
+              </li>
+              <li>
+                <Link href="#">Offers</Link>
+              </li>
+              <li>
+                <Link href="#">Contact Us</Link>
+              </li>
             </ul>
           </div>
 
@@ -62,12 +85,24 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold mb-4">CUSTOMER SERVICE</h3>
             <ul className="space-y-2 text-sm text-gray-800">
-              <li><Link href="#">My Account</Link></li>
-              <li><Link href="#">Order Tracking</Link></li>
-              <li><Link href="#">Shipping & Returns</Link></li>
-              <li><Link href="#">FAQ</Link></li>
-              <li><Link href="#">Warranty Policy</Link></li>
-              <li><Link href="#">Support Center</Link></li>
+              <li>
+                <Link href="#">My Account</Link>
+              </li>
+              <li>
+                <Link href="#">Order Tracking</Link>
+              </li>
+              <li>
+                <Link href="#">Shipping & Returns</Link>
+              </li>
+              <li>
+                <Link href="#">FAQ</Link>
+              </li>
+              <li>
+                <Link href="#">Warranty Policy</Link>
+              </li>
+              <li>
+                <Link href="#">Support Center</Link>
+              </li>
             </ul>
           </div>
 
