@@ -43,27 +43,55 @@ export default function ValueForMoneySection() {
               }`}
             >
               {/* Images */}
-              <div className="flex gap-4 flex-1">
-                {product.images.map((img, i) => (
-                  <div
-                    key={i}
-                    className="relative w-full h-55 md:h-65 rounded-xl overflow-hidden shadow-md"
-                  >
-                    <Image
-                      src={img}
-                      alt={product.title}
-                      fill
-                      className="object-cover"
-                    />
+              <div className="flex-1 w-full">
+                {/* ===== MOBILE SLIDER ===== */}
+                <div className="flex sm:hidden overflow-x-auto scroll-smooth snap-x snap-mandatory gap-4 pb-4">
+                  {product.images.map((img, i) => (
+                    <div
+                      key={i}
+                      className="relative min-w-[85%] aspect-[4/3] snap-center rounded-xl overflow-hidden shadow-md"
+                    >
+                      <Image
+                        src={img}
+                        alt={product.title}
+                        fill
+                        className="object-cover"
+                        sizes="100vw"
+                      />
 
-                    {/* Rating Badge (only on last image) */}
-                    {i === product.images.length - 1 && (
-                      <div className="absolute bottom-3 right-3 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-medium">
-                        {product.rating} ★
-                      </div>
-                    )}
-                  </div>
-                ))}
+                      {/* Rating badge */}
+                      {i === product.images.length - 1 && (
+                        <div className="absolute bottom-3 right-3 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+                          {product.rating} ★
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* ===== DESKTOP GRID ===== */}
+                <div className="hidden sm:grid grid-cols-3 gap-4">
+                  {product.images.map((img, i) => (
+                    <div
+                      key={i}
+                      className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-md"
+                    >
+                      <Image
+                        src={img}
+                        alt={product.title}
+                        fill
+                        className="object-cover"
+                        sizes="33vw"
+                      />
+
+                      {i === product.images.length - 1 && (
+                        <div className="absolute bottom-3 right-3 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+                          {product.rating} ★
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
 
               {/* Content */}
