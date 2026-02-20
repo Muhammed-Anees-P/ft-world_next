@@ -178,7 +178,70 @@ export default function ProductSinglePage() {
             Related Products
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* ===== MOBILE SLIDER ===== */}
+          <div className="flex sm:hidden overflow-x-auto snap-x snap-mandatory gap-4 pb-4 scroll-smooth">
+            {relatedProducts.map((item) => (
+              <div
+                key={item.id}
+                className="min-w-[75%] snap-center bg-white rounded-2xl p-6 shadow-sm text-center"
+              >
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  width={160}
+                  height={160}
+                  className="object-contain mx-auto"
+                />
+
+                <h4 className="text-sm font-medium text-gray-800 mt-4">
+                  {item.title}
+                </h4>
+
+                <button
+                  className="mt-4 w-full text-white py-2 rounded-lg text-sm"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, #542452 0%, #BA50B6 100%)",
+                  }}
+                >
+                  Buy
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="flex sm:hidden overflow-x-auto snap-x snap-mandatory gap-4 pb-4 scroll-smooth">
+            {relatedProducts.map((item) => (
+              <div
+                key={item.id}
+                className="min-w-[75%] snap-center bg-white rounded-2xl p-6 shadow-sm text-center"
+              >
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  width={160}
+                  height={160}
+                  className="object-contain mx-auto"
+                />
+
+                <h4 className="text-sm font-medium text-gray-800 mt-4">
+                  {item.title}
+                </h4>
+
+                <button
+                  className="mt-4 w-full text-white py-2 rounded-lg text-sm"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, #542452 0%, #BA50B6 100%)",
+                  }}
+                >
+                  Buy
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* ===== DESKTOP GRID ===== */}
+          <div className="hidden sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {relatedProducts.map((item) => (
               <div
                 key={item.id}
