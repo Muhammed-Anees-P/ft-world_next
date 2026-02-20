@@ -1,22 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
   Search,
   User,
   ShoppingCart,
-  Bell,
+  ChevronRight,
   Menu,
   X,
-  ChevronRight,
   MenuIcon,
 } from "lucide-react";
 import Container from "./Container";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const closeTimeout = useRef<NodeJS.Timeout | null>(null);
+
   const [searchText, setSearchText] = useState("");
 
   const placeholders = [
@@ -29,6 +31,7 @@ export default function Navbar() {
   const [index, setIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  /* ================= TYPEWRITER ================= */
   useEffect(() => {
     if (searchText) return;
 
@@ -55,23 +58,33 @@ export default function Navbar() {
     return () => clearTimeout(timeout);
   }, [currentText, isDeleting, index, searchText]);
 
-  return (
-    <nav className="w-full bg-[#FFFFFF] shadow-sm">
-      <Container className="flex items-center justify-between py-3">
-        {/* Left Logo */}
-        <div className="flex items-center hover:cursor-pointer">
-          <Link href={"/"}>
-            <Image
-              src="/ft-world_logo.png"
-              alt="Company Logo"
-              width={130}
-              height={40}
-              className="object-contain"
-            />
-          </Link>
-        </div>
+  /* ================= DROPDOWN HANDLERS ================= */
+  const handleEnter = (name: string) => {
+    if (closeTimeout.current) clearTimeout(closeTimeout.current);
+    setActiveDropdown(name);
+  };
 
-        {/* Center Search (Desktop) */}
+  const handleLeave = () => {
+    closeTimeout.current = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 150);
+  };
+
+  return (
+    <nav className="w-full bg-white shadow-sm">
+      <Container className="flex items-center justify-between py-3">
+        {/* LOGO */}
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/ft-world_logo.png"
+            alt="Company Logo"
+            width={130}
+            height={40}
+            className="object-contain"
+          />
+        </Link>
+
+        {/* SEARCH DESKTOP */}
         <div className="hidden md:flex flex-1 mx-8 max-w-2xl">
           <div className="relative w-full">
             <Search
@@ -94,67 +107,125 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Desktop Right Buttons */}
+        {/* RIGHT DESKTOP */}
         <div className="hidden md:flex items-center gap-4">
-          {/* LOGIN */}
-          <Link
-            href="#"
-            className="flex items-center bg-[#5B2758] rounded-full pl-1 pr-5 py-2 text-white text-sm font-medium hover:opacity-95 transition h-10"
+          {/* LOGIN DROPDOWN */}
+          <div
+            className="relative"
+            onMouseEnter={() => handleEnter("login")}
+            onMouseLeave={handleLeave}
           >
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-linear-to-br from-[#7A2E7A] to-[#C53BD2] mr-3">
-              <User size={16} className="text-white" />
+            <div
+              className={`flex items-center rounded-full pl-1 pr-5 py-2 text-white text-sm font-medium h-10 cursor-pointer transition ${
+                activeDropdown === "login" ? "bg-black" : "bg-[#5B2758]"
+              }`}
+            >
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-linear-to-br from-[#7A2E7A] to-[#C53BD2] mr-3">
+                <User size={16} />
+              </div>
+
+              <span className="mr-2">Login</span>
+
+              <ChevronRight
+                size={16}
+                className={`transition-transform ${
+                  activeDropdown === "login" ? "rotate-90" : ""
+                }`}
+              />
             </div>
-            <span className="mr-2">Login</span>
-            <ChevronRight size={16} className="text-white" />
-          </Link>
+
+            {activeDropdown === "login" && (
+              <div className="absolute right-0 mt-2 w-44 bg-[#D9D9D9] rounded-xl shadow-lg py-3 animate-dropdown z-50">
+                <Link
+                  href="/profile"
+                  className="block px-4 py-2 hover:bg-gray-200 text-sm"
+                >
+                  My Profile
+                </Link>
+                <Link
+                  href="/orders"
+                  className="block px-4 py-2 hover:bg-gray-200 text-sm"
+                >
+                  Orders
+                </Link>
+                <Link
+                  href="/wishlist"
+                  className="block px-4 py-2 hover:bg-gray-200 text-sm"
+                >
+                  Wishlist
+                </Link>
+              </div>
+            )}
+          </div>
 
           {/* CART */}
           <Link
-            href="#"
-            className="flex items-center bg-[#5B2758] rounded-full pl-1 pr-5 py-2 text-white text-sm font-medium hover:opacity-95 transition h-10"
+            href="/cart"
+            className="flex items-center bg-[#5B2758] rounded-full pl-1 pr-5 py-2 text-white text-sm font-medium h-10 hover:opacity-95 transition"
           >
             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-linear-to-br from-[#7A2E7A] to-[#C53BD2] mr-3">
-              <ShoppingCart size={16} className="text-white" />
+              <ShoppingCart size={16} />
             </div>
             Cart
           </Link>
 
-          {/* MORE */}
-          <Link
-            href="#"
-            className="flex items-center bg-[#5B2758] rounded-full pl-1 pr-5 py-2 text-white text-sm font-medium hover:opacity-95 transition h-10"
+          {/* MORE DROPDOWN */}
+          <div
+            className="relative"
+            onMouseEnter={() => handleEnter("more")}
+            onMouseLeave={handleLeave}
           >
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-linear-to-br from-[#7A2E7A] to-[#C53BD2] mr-3">
-              <MenuIcon size={16} />
-            </div>
-            <span className="mr-2">More</span>
-            <ChevronRight size={16} className="text-white" />
-          </Link>
-
-          {/* NOTIFICATION */}
-          <button className="bg-[#5B2758] text-white p-2.5 rounded-full hover:opacity-95 transition">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+            <div
+              className={`flex items-center rounded-full pl-1 pr-5 py-2 text-white text-sm font-medium h-10 cursor-pointer transition ${
+                activeDropdown === "more" ? "bg-black" : "bg-[#5B2758]"
+              }`}
             >
-              <path d="M10.268 21a2 2 0 0 0 3.464 0" />
-              <path d="M11.68 2.009A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673c-.824-.85-1.678-1.731-2.21-3.348" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-linear-to-br from-[#7A2E7A] to-[#C53BD2] mr-3">
+                <MenuIcon size={16} />
+              </div>
 
-              <circle cx="18" cy="5" r="4" fill="white" />
+              <span className="mr-2">More</span>
 
-              <circle cx="18" cy="5" r="3.5" fill="red" />
-            </svg>
-          </button>
+              <ChevronRight
+                size={16}
+                className={`transition-transform ${
+                  activeDropdown === "more" ? "rotate-90" : ""
+                }`}
+              />
+            </div>
+
+            {activeDropdown === "more" && (
+              <div className="absolute right-0 mt-2 w-44 bg-[#D9D9D9] rounded-xl shadow-lg py-3 animate-dropdown z-50">
+                <Link
+                  href="/about"
+                  className="block px-4 py-2 hover:bg-gray-200 text-sm"
+                >
+                  About Us
+                </Link>
+                <Link
+                  href="/products"
+                  className="block px-4 py-2 hover:bg-gray-200 text-sm"
+                >
+                  Products
+                </Link>
+                <Link
+                  href="/categories"
+                  className="block px-4 py-2 hover:bg-gray-200 text-sm"
+                >
+                  Categories
+                </Link>
+                <Link
+                  href="/contact"
+                  className="block px-4 py-2 hover:bg-gray-200 text-sm"
+                >
+                  Contact Us
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Mobile Icons */}
+        {/* MOBILE */}
         <div className="flex md:hidden items-center gap-3">
           <ShoppingCart className="text-[#542452]" size={22} />
           <button onClick={() => setMenuOpen(!menuOpen)}>
@@ -167,44 +238,24 @@ export default function Navbar() {
         </div>
       </Container>
 
-      {/* Mobile Menu */}
+      {/* MOBILE MENU */}
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-gray-200">
           <Container className="py-4 space-y-4">
-            <div className="relative">
-              <Search
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                size={18}
-              />
-              <input
-                type="text"
-                placeholder="Search Products, brands and more"
-                className="w-full pl-12 pr-4 py-2.5 rounded-full border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#542452]"
-              />
-            </div>
-
-            <Link
-              href="#"
-              className="flex items-center gap-2 text-[#542452] py-2"
-            >
-              <User size={18} />
+            <Link href="/login" className="block py-2 text-[#542452]">
               Login
             </Link>
-
-            <Link
-              href="#"
-              className="flex items-center gap-2 text-[#542452] py-2"
-            >
-              <ShoppingCart size={18} />
+            <Link href="/cart" className="block py-2 text-[#542452]">
               Cart
             </Link>
-
-            <Link
-              href="#"
-              className="flex items-center gap-2 text-[#542452] py-2"
-            >
-              <MenuIcon size={18} />
-              More
+            <Link href="/about" className="block py-2 text-[#542452]">
+              About Us
+            </Link>
+            <Link href="/products" className="block py-2 text-[#542452]">
+              Products
+            </Link>
+            <Link href="/contact" className="block py-2 text-[#542452]">
+              Contact
             </Link>
           </Container>
         </div>
@@ -224,6 +275,21 @@ export default function Navbar() {
           25%,
           75% {
             opacity: 0;
+          }
+        }
+
+        .animate-dropdown {
+          animation: dropdownFade 0.2s ease forwards;
+        }
+
+        @keyframes dropdownFade {
+          from {
+            opacity: 0;
+            transform: translateY(-8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
           }
         }
       `}</style>
