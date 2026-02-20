@@ -50,7 +50,7 @@ export default function Footer() {
             <h3 className="font-semibold mb-4">QUICK LINKS</h3>
             <ul className="space-y-2 text-sm text-gray-800">
               <li><Link href="#">Home</Link></li>
-              <li><Link href="#">About Us</Link></li>
+              <li><Link href="/about">About Us</Link></li>
               <li><Link href="#">Products</Link></li>
               <li><Link href="#">Categories</Link></li>
               <li><Link href="#">Offers</Link></li>
