@@ -59,14 +59,16 @@ export default function Navbar() {
     <nav className="w-full bg-[#FFFFFF] shadow-sm">
       <Container className="flex items-center justify-between py-3">
         {/* Left Logo */}
-        <div className="flex items-center">
-          <Image
-            src="/ft-world_logo.png"
-            alt="Company Logo"
-            width={130}
-            height={40}
-            className="object-contain"
-          />
+        <div className="flex items-center hover:cursor-pointer">
+          <Link href={"/"}>
+            <Image
+              src="/ft-world_logo.png"
+              alt="Company Logo"
+              width={130}
+              height={40}
+              className="object-contain"
+            />
+          </Link>
         </div>
 
         {/* Center Search (Desktop) */}
