@@ -30,7 +30,7 @@ export default function BannerPage() {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 5;
 
   const totalPages = Math.ceil(banners.length / itemsPerPage);
   const paginatedBanners = banners.slice(
@@ -42,7 +42,7 @@ export default function BannerPage() {
     try {
       const res = await AXIOS.get("/banner");
       setBanners(res.data.data);
-    } catch (err) {
+    } catch {
       toast.error("Failed to fetch banners");
     } finally {
       setLoading(false);
@@ -91,10 +91,10 @@ export default function BannerPage() {
     try {
       if (editingId) {
         await AXIOS.patch(`/banner/${editingId}`, payload);
-        toast.success("Banner updated");
+        toast.success("Banner updated successfully");
       } else {
         await AXIOS.post("/banner", payload);
-        toast.success("Banner created");
+        toast.success("Banner created successfully");
       }
 
       setForm({});
@@ -129,7 +129,7 @@ export default function BannerPage() {
 
     try {
       await AXIOS.delete(`/banner/${id}`);
-      toast.success("Banner deleted");
+      toast.success("Banner deleted successfully");
       fetchBanners();
     } catch {
       toast.error("Delete failed");
@@ -169,7 +169,7 @@ export default function BannerPage() {
               <p className="text-sm text-gray-500 mt-1">Uploading...</p>
             )}
             {form.imageUrl && (
-              <img src={form.imageUrl} className="w-40 mt-3 rounded-lg" />
+              <img src={form.imageUrl} className="w-32 mt-3 rounded-lg" />
             )}
           </div>
 
@@ -191,79 +191,98 @@ export default function BannerPage() {
         </button>
       </div>
 
-      {/* Cards Grid */}
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {paginatedBanners.map((banner) => (
-              <div
-                key={banner._id}
-                className="bg-white rounded-2xl shadow hover:shadow-xl transition border"
-              >
-                <img
-                  src={banner.imageUrl}
-                  className="w-full h-40 object-cover rounded-t-2xl"
-                />
+      {/* Table */}
+      <div className="bg-white rounded-2xl shadow border overflow-hidden">
+        <table className="w-full text-left">
+          <thead className="bg-gray-50 text-sm text-gray-600">
+            <tr>
+              <th className="p-4">Image</th>
+              <th className="p-4">Title</th>
+              <th className="p-4">Description</th>
+              <th className="p-4">Status</th>
+              <th className="p-4 text-right">Actions</th>
+            </tr>
+          </thead>
 
-                <div className="p-4 space-y-2">
-                  <h4 className="font-semibold">
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan={5} className="p-6 text-center">
+                  Loading...
+                </td>
+              </tr>
+            ) : paginatedBanners.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="p-6 text-center">
+                  No banners found
+                </td>
+              </tr>
+            ) : (
+              paginatedBanners.map((banner) => (
+                <tr key={banner._id} className="border-t">
+                  <td className="p-4">
+                    <img
+                      src={banner.imageUrl}
+                      className="w-16 h-12 object-cover rounded-lg"
+                    />
+                  </td>
+
+                  <td className="p-4 font-medium">
                     {banner.title || "Untitled"}
-                  </h4>
+                  </td>
 
-                  <p className="text-sm text-gray-500">
+                  <td className="p-4 text-gray-500">
                     {banner.description || "-"}
-                  </p>
+                  </td>
 
-                  <span
-                    className={`text-xs px-3 py-1 rounded-full ${
-                      banner.isActive
-                        ? "bg-green-100 text-green-600"
-                        : "bg-gray-200 text-gray-500"
-                    }`}
-                  >
-                    {banner.isActive ? "Active" : "Inactive"}
-                  </span>
+                  <td className="p-4">
+                    <span
+                      className={`px-3 py-1 text-xs rounded-full ${
+                        banner.isActive
+                          ? "bg-green-100 text-green-600"
+                          : "bg-gray-200 text-gray-500"
+                      }`}
+                    >
+                      {banner.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </td>
 
-                  <div className="flex justify-end gap-3 pt-3">
+                  <td className="p-4 text-right space-x-3">
                     <button
                       onClick={() => handleEdit(banner)}
-                      className="text-blue-500"
+                      className="text-blue-500 hover:text-blue-700"
                     >
                       <Pencil size={18} />
                     </button>
 
                     <button
                       onClick={() => handleDelete(banner._id)}
-                      className="text-red-500"
+                      className="text-red-500 hover:text-red-700"
                     >
                       <Trash2 size={18} />
                     </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
 
-          {/* Pagination */}
-          <div className="flex justify-center gap-3 mt-8">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`px-4 py-2 rounded-lg ${
-                  currentPage === i + 1
-                    ? "bg-[#542452] text-white"
-                    : "bg-gray-200"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
-        </>
-      )}
+      {/* Pagination */}
+      <div className="flex justify-center gap-3">
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentPage(i + 1)}
+            className={`px-4 py-2 rounded-lg ${
+              currentPage === i + 1 ? "bg-[#542452] text-white" : "bg-gray-200"
+            }`}
+          >
+            {i + 1}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
