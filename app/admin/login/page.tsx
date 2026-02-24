@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import api from "@/lib/axios";
 import { jwtDecode } from "jwt-decode";
+import AXIOS from "@/lib/axios";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -34,7 +34,7 @@ export default function AdminLoginPage() {
     setError("");
 
     try {
-      const res = await api.post("/auth/login", {
+      const res = await AXIOS.post("/auth/login", {
         username,
         password,
       });
