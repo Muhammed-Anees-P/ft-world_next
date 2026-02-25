@@ -1,10 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import AXIOS from "@/lib/axios";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import Swal from "sweetalert2";
 import { Pencil, Trash2, Plus, X } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useProductStore } from "@/store/productStore";
+import { categoriesQuery } from "@/hooks/userCategoriesQuery";
+import {
+  createProduct,
+  deleteProduct,
+  updateProduct,
+} from "@/services/productServices";
+import { uploadImage } from "@/services/bannerService";
+import { useProductQuery } from "@/hooks/useProductQuery";
 
 interface Category {
   _id: string;
@@ -24,11 +33,15 @@ interface Product {
 }
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
+  const queryClient = useQueryClient();
+  const { isLoading } = useProductQuery();
+  const products = useProductStore((state) => state.products);
 
+  // ================= CATEGORIES QUERY =================
+
+  const { data: categories = [] } = useQuery(categoriesQuery());
+
+  const [uploading, setUploading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -45,35 +58,39 @@ export default function ProductsPage() {
 
   const [form, setForm] = useState(initialForm);
 
-  useEffect(() => {
-    fetchProducts();
-    fetchCategories();
-  }, []);
+  // ================= MUTATIONS =================
 
-  const fetchProducts = async () => {
-    try {
-      const res = await AXIOS.get("/products");
-      setProducts(res.data.data);
-    } catch {
-      toast.error("Failed to fetch products");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const createMutation = useMutation({
+    mutationFn: createProduct,
+    onSuccess: () => {
+      toast.success("Product created");
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      closeModal();
+    },
+  });
 
-  const fetchCategories = async () => {
-    try {
-      const res = await AXIOS.get("/categories");
-      setCategories(res.data.data);
-    } catch {
-      toast.error("Failed to fetch categories");
-    }
-  };
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: any) => updateProduct(id, data),
+    onSuccess: () => {
+      toast.success("Product updated");
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      closeModal();
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteProduct,
+    onSuccess: () => {
+      toast.success("Product deleted");
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
+
+  // ================= MODAL =================
 
   const openModal = (product?: Product) => {
     if (product) {
       setEditingId(product._id);
-
       setForm({
         name: product.name,
         slug: product.slug,
@@ -98,6 +115,8 @@ export default function ProductsPage() {
     setForm(initialForm);
   };
 
+  // ================= FILE UPLOAD =================
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
 
@@ -109,14 +128,8 @@ export default function ProductsPage() {
       const uploaded: string[] = [];
 
       for (const file of files) {
-        const fd = new FormData();
-        fd.append("file", file);
-
-        const res = await AXIOS.post("/upload", fd, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-
-        uploaded.push(res.data.url);
+        const url = await uploadImage(file);
+        uploaded.push(url);
       }
 
       setForm((prev) => ({
@@ -132,7 +145,9 @@ export default function ProductsPage() {
     }
   };
 
-  const handleSubmit = async () => {
+  // ================= SUBMIT =================
+
+  const handleSubmit = () => {
     if (!form.name || !form.price || !form.category) {
       toast.error("Required fields missing");
       return;
@@ -149,19 +164,10 @@ export default function ProductsPage() {
       isActive: form.isActive,
     };
 
-    try {
-      if (editingId) {
-        await AXIOS.patch(`/products/${editingId}`, payload);
-        toast.success("Product updated");
-      } else {
-        await AXIOS.post("/products", payload);
-        toast.success("Product created");
-      }
-
-      fetchProducts();
-      closeModal();
-    } catch {
-      toast.error("Error saving product");
+    if (editingId) {
+      updateMutation.mutate({ id: editingId, data: payload });
+    } else {
+      createMutation.mutate(payload);
     }
   };
 
@@ -173,14 +179,8 @@ export default function ProductsPage() {
       confirmButtonColor: "#542452",
     });
 
-    if (!result.isConfirmed) return;
-
-    try {
-      await AXIOS.delete(`/products/${id}`);
-      toast.success("Product deleted");
-      fetchProducts();
-    } catch {
-      toast.error("Delete failed");
+    if (result.isConfirmed) {
+      deleteMutation.mutate(id);
     }
   };
 
@@ -197,7 +197,6 @@ export default function ProductsPage() {
         </button>
       </div>
 
-      {/* TABLE */}
       <div className="bg-white rounded-2xl shadow border overflow-hidden">
         <table className="w-full">
           <thead className="bg-gray-50 text-sm">
@@ -212,7 +211,7 @@ export default function ProductsPage() {
             </tr>
           </thead>
           <tbody>
-            {loading ? (
+            {isLoading ? (
               <tr>
                 <td colSpan={7} className="p-6 text-center">
                   Loading...
@@ -263,7 +262,6 @@ export default function ProductsPage() {
         </table>
       </div>
 
-      {/* MODAL */}
       {isOpen && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-3xl rounded-2xl p-6 relative">
@@ -299,7 +297,7 @@ export default function ProductsPage() {
                 className="p-3 border rounded-xl"
               >
                 <option value="">Select Category</option>
-                {categories.map((cat) => (
+                {categories.map((cat: Category) => (
                   <option key={cat._id} value={cat._id}>
                     {cat.name}
                   </option>
@@ -320,16 +318,12 @@ export default function ProductsPage() {
                 className="p-3 border rounded-xl"
               />
 
-              {/* isActive toggle */}
               <div className="flex items-center gap-3">
                 <input
                   type="checkbox"
                   checked={form.isActive}
                   onChange={(e) =>
-                    setForm({
-                      ...form,
-                      isActive: e.target.checked,
-                    })
+                    setForm({ ...form, isActive: e.target.checked })
                   }
                 />
                 <span>Active</span>
