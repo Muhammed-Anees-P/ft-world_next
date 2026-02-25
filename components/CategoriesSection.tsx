@@ -1,21 +1,32 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Container from "./Container";
+import { useQuery } from "@tanstack/react-query";
+import { categoriesQuery } from "@/hooks/userCategoriesQuery";
 
-const categories = [
-  { name: "Desktops", image: "/cat1.png" },
-  { name: "Printers", image: "/cat2.png" },
-  { name: "Smart Phones", image: "/cat3.png" },
-  { name: "Cameras", image: "/cat4.png" },
-  { name: "Head Phones", image: "/cat5.png" },
-  { name: "Smart Watches", image: "/cat6.png" },
-];
+interface Category {
+  _id: string;
+  name: string;
+  imageUrl?: string;
+  isActive?: boolean;
+}
 
 export default function CategoriesSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [showArrows, setShowArrows] = useState(false);
+
+  const { data = [], isLoading } = useQuery(categoriesQuery());
+
+  const categories: Category[] = data.filter((cat: Category) => cat?.isActive);
+
+  const checkOverflow = () => {
+    if (!scrollRef.current) return;
+    const { scrollWidth, clientWidth } = scrollRef.current;
+    setShowArrows(scrollWidth > clientWidth);
+  };
 
   const scroll = (direction: "left" | "right") => {
     if (!scrollRef.current) return;
@@ -28,56 +39,112 @@ export default function CategoriesSection() {
     });
   };
 
+  useEffect(() => {
+    checkOverflow();
+    window.addEventListener("resize", checkOverflow);
+    return () => window.removeEventListener("resize", checkOverflow);
+  }, [categories]);
+
+  if (isLoading) return null;
+  if (categories.length === 0) return null;
+
   return (
-    <section className="w-full  bg-[#FFFFFF]  py-12">
+    <section className="w-full bg-[#F5F5F5] py-16">
       <Container>
-        {/* Title */}
-        <h2 className="text-2xl font-semibold mb-8">Categories</h2>
+        <h2
+          className="text-[40px]  leading-none text-left text-black mb-10"
+          style={{ fontWeight: "400" }}
+        >
+          Categories
+        </h2>
 
         <div className="relative">
-          {/* Left Button */}
-          <button
-            onClick={() => scroll("left")}
-            className="hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 
-                       w-10 h-10 bg-white shadow-md rounded-full 
-                       items-center justify-center z-10"
-          >
-            <ChevronLeft size={20} />
-          </button>
+          {/* LEFT BUTTON */}
+          {showArrows && (
+            <button
+              onClick={() => scroll("left")}
+              className="
+                hidden md:flex
+                absolute left-0 top-1/2 -translate-y-1/2
+                -translate-x-1/2
+                w-10 h-10
+                bg-white border border-gray-200
+                rounded-full
+                items-center justify-center
+                shadow-sm hover:shadow-md
+                transition
+                z-20
+              "
+            >
+              <ChevronLeft size={20} />
+            </button>
+          )}
 
-          {/* Categories Scroll Container */}
+          {/* SCROLL CONTAINER */}
           <div
             ref={scrollRef}
-            className="flex gap-6 overflow-x-auto scroll-smooth no-scrollbar"
+            className="flex gap-8 overflow-x-auto scroll-smooth no-scrollbar"
           >
-            {categories.map((cat, index) => (
+            {categories.map((cat) => (
               <div
-                key={index}
-                className="min-w-45 sm:min-w-50 bg-white rounded-xl shadow-md p-4 flex flex-col items-center hover:shadow-lg transition"
+                key={cat._id}
+                className="flex-shrink-0 w-[276px] flex flex-col items-center group"
               >
-                <div className="relative w-30 h-30 mb-4">
-                  <Image
-                    src={cat.image}
-                    alt={cat.name}
-                    fill
-                    className="object-contain"
-                  />
+                {/* CARD */}
+                <div
+                  className="
+                    w-full h-[195px]
+                    rounded-[20px]
+                    bg-gradient-to-b from-white to-gray-50
+                    border border-gray-200
+                    shadow-[0px_0px_4px_0px_#00000020]
+                    flex items-center justify-center
+                    transition-all duration-300
+                    group-hover:shadow-[0px_8px_20px_0px_#00000025]
+                    group-hover:-translate-y-2
+                  "
+                >
+                  {cat.imageUrl && (
+                    <div className="relative w-[80%] h-[80%] transition-transform duration-300 group-hover:scale-105">
+                      <Image
+                        src={cat.imageUrl}
+                        alt={cat.name}
+                        fill
+                        sizes="276px"
+                        className="object-contain"
+                      />
+                    </div>
+                  )}
                 </div>
 
-                <p className="text-sm font-medium text-center">{cat.name}</p>
+                {/* TITLE */}
+                <p className="mt-5 text-base font-medium text-center transition-colors duration-300 group-hover:text-[#542452]">
+                  {cat.name}
+                </p>
               </div>
             ))}
           </div>
 
-          {/* Right Button */}
-          <button
-            onClick={() => scroll("right")}
-            className="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 
-                       w-10 h-10 bg-white shadow-md rounded-full 
-                       items-center justify-center z-10"
-          >
-            <ChevronRight size={20} />
-          </button>
+          {/* RIGHT BUTTON */}
+          {showArrows && (
+            <button
+              onClick={() => scroll("right")}
+              className="
+                hidden md:flex
+                absolute right-0 top-1/2 -translate-y-1/2
+                translate-x-1/2
+                w-10 h-10
+                bg-white border border-gray-200
+                rounded-full
+                items-center justify-center
+                shadow-sm hover:shadow-md
+                transition
+                z-20
+              "
+            >
+              <ChevronRight size={20} />
+            </button>
+          )}
         </div>
       </Container>
     </section>
