@@ -20,6 +20,7 @@ interface Product {
   stock: number;
   category: Category;
   images: string[];
+  isActive: boolean;
 }
 
 export default function ProductsPage() {
@@ -39,6 +40,7 @@ export default function ProductsPage() {
     images: [] as string[],
     price: "",
     stock: "",
+    isActive: true,
   };
 
   const [form, setForm] = useState(initialForm);
@@ -72,7 +74,6 @@ export default function ProductsPage() {
     if (product) {
       setEditingId(product._id);
 
-      // Only allowed fields
       setForm({
         name: product.name,
         slug: product.slug,
@@ -81,6 +82,7 @@ export default function ProductsPage() {
         images: product.images || [],
         price: product.price.toString(),
         stock: product.stock.toString(),
+        isActive: product.isActive ?? true,
       });
     } else {
       setEditingId(null);
@@ -136,7 +138,6 @@ export default function ProductsPage() {
       return;
     }
 
-    // Only DTO allowed fields
     const payload = {
       name: form.name,
       slug: form.slug,
@@ -145,6 +146,7 @@ export default function ProductsPage() {
       images: form.images,
       price: Number(form.price),
       stock: Number(form.stock),
+      isActive: form.isActive,
     };
 
     try {
@@ -195,6 +197,7 @@ export default function ProductsPage() {
         </button>
       </div>
 
+      {/* TABLE */}
       <div className="bg-white rounded-2xl shadow border overflow-hidden">
         <table className="w-full">
           <thead className="bg-gray-50 text-sm">
@@ -204,13 +207,14 @@ export default function ProductsPage() {
               <th className="p-4">Category</th>
               <th className="p-4">Price</th>
               <th className="p-4">Stock</th>
+              <th className="p-4">Status</th>
               <th className="p-4 text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={6} className="p-6 text-center">
+                <td colSpan={7} className="p-6 text-center">
                   Loading...
                 </td>
               </tr>
@@ -227,6 +231,17 @@ export default function ProductsPage() {
                   <td className="p-4">{p.category?.name}</td>
                   <td className="p-4">${p.price}</td>
                   <td className="p-4">{p.stock}</td>
+                  <td className="p-4">
+                    <span
+                      className={`px-3 py-1 text-xs rounded-full ${
+                        p.isActive
+                          ? "bg-green-100 text-green-600"
+                          : "bg-red-100 text-red-600"
+                      }`}
+                    >
+                      {p.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </td>
                   <td className="p-4 text-right space-x-3">
                     <button
                       onClick={() => openModal(p)}
@@ -304,6 +319,21 @@ export default function ProductsPage() {
                 onChange={(e) => setForm({ ...form, stock: e.target.value })}
                 className="p-3 border rounded-xl"
               />
+
+              {/* isActive toggle */}
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={form.isActive}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      isActive: e.target.checked,
+                    })
+                  }
+                />
+                <span>Active</span>
+              </div>
 
               <input type="file" multiple onChange={handleFileUpload} />
 
