@@ -12,7 +12,7 @@ import {
   uploadImage,
 } from "@/services/bannerService";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useBannerUIStore } from "@/zustand/useBannerUIStore";
+import { useBannerUIStore } from "@/store/useBannerUIStore";
 
 interface Banner {
   _id: string;
