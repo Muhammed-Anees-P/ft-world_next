@@ -1,10 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Pencil, Trash2, Plus, X } from "lucide-react";
-import AXIOS from "@/lib/axios";
 import toast from "react-hot-toast";
 import Swal from "sweetalert2";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  createCategory,
+  deleteCategory,
+  getCategories,
+  updateCategory,
+} from "@/services/categoryService";
+import { uploadImage } from "@/services/bannerService";
 
 interface Category {
   _id: string;
@@ -15,10 +22,14 @@ interface Category {
 }
 
 export default function CategoriesPage() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
+  const queryClient = useQueryClient();
 
+  const { data: categories = [], isLoading } = useQuery({
+    queryKey: ["categories"],
+    queryFn: getCategories,
+  });
+
+  const [uploading, setUploading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -41,20 +52,35 @@ export default function CategoriesPage() {
     currentPage * itemsPerPage,
   );
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
+  // ================= MUTATIONS =================
 
-  const fetchCategories = async () => {
-    try {
-      const res = await AXIOS.get("/categories");
-      setCategories(res.data.data);
-    } catch {
-      toast.error("Failed to fetch categories");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const createMutation = useMutation({
+    mutationFn: createCategory,
+    onSuccess: () => {
+      toast.success("Category created successfully");
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      closeModal();
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: any) => updateCategory(id, data),
+    onSuccess: () => {
+      toast.success("Category updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      closeModal();
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteCategory,
+    onSuccess: () => {
+      toast.success("Category deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+    },
+  });
+
+  // ================= MODAL =================
 
   const openModal = (category?: Category) => {
     if (category) {
@@ -79,23 +105,18 @@ export default function CategoriesPage() {
     setForm(initialForm);
   };
 
+  // ================= FILE UPLOAD =================
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
-
     try {
       setUploading(true);
-
-      const res = await AXIOS.post("/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const url = await uploadImage(e.target.files[0]);
 
       setForm((prev) => ({
         ...prev,
-        imageUrl: res.data.url,
+        imageUrl: url,
       }));
 
       toast.success("Image uploaded successfully");
@@ -106,7 +127,9 @@ export default function CategoriesPage() {
     }
   };
 
-  const handleSubmit = async () => {
+  // ================= SUBMIT =================
+
+  const handleSubmit = () => {
     if (!form.name) {
       toast.error("Category name is required");
       return;
@@ -119,19 +142,10 @@ export default function CategoriesPage() {
       isActive: form.isActive,
     };
 
-    try {
-      if (editingId) {
-        await AXIOS.patch(`/categories/${editingId}`, payload);
-        toast.success("Category updated successfully");
-      } else {
-        await AXIOS.post("/categories", payload);
-        toast.success("Category created successfully");
-      }
-
-      fetchCategories();
-      closeModal();
-    } catch {
-      toast.error("Error saving category");
+    if (editingId) {
+      updateMutation.mutate({ id: editingId, data: payload });
+    } else {
+      createMutation.mutate(payload);
     }
   };
 
@@ -145,14 +159,8 @@ export default function CategoriesPage() {
       confirmButtonText: "Delete",
     });
 
-    if (!result.isConfirmed) return;
-
-    try {
-      await AXIOS.delete(`/categories/${id}`);
-      toast.success("Category deleted successfully");
-      fetchCategories();
-    } catch {
-      toast.error("Delete failed");
+    if (result.isConfirmed) {
+      deleteMutation.mutate(id);
     }
   };
 
@@ -169,7 +177,6 @@ export default function CategoriesPage() {
         </button>
       </div>
 
-      {/* TABLE */}
       <div className="bg-white rounded-2xl shadow border overflow-hidden">
         <table className="w-full text-left">
           <thead className="bg-gray-50 text-sm text-gray-600">
@@ -183,7 +190,7 @@ export default function CategoriesPage() {
           </thead>
 
           <tbody>
-            {loading ? (
+            {isLoading ? (
               <tr>
                 <td colSpan={5} className="p-6 text-center">
                   Loading...
@@ -196,7 +203,7 @@ export default function CategoriesPage() {
                 </td>
               </tr>
             ) : (
-              paginatedCategories.map((category) => (
+              paginatedCategories.map((category: Category) => (
                 <tr key={category._id} className="border-t">
                   <td className="p-4">
                     {category.imageUrl && (
@@ -247,7 +254,6 @@ export default function CategoriesPage() {
         </table>
       </div>
 
-      {/* PAGINATION */}
       <div className="flex justify-center gap-3">
         {Array.from({ length: totalPages }, (_, i) => (
           <button
@@ -262,7 +268,6 @@ export default function CategoriesPage() {
         ))}
       </div>
 
-      {/* MODAL */}
       {isOpen && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-xl rounded-2xl p-6 relative">
@@ -291,10 +296,7 @@ export default function CategoriesPage() {
                 placeholder="Description"
                 value={form.description}
                 onChange={(e) =>
-                  setForm({
-                    ...form,
-                    description: e.target.value,
-                  })
+                  setForm({ ...form, description: e.target.value })
                 }
                 className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-[#542452]"
               />
@@ -314,10 +316,7 @@ export default function CategoriesPage() {
                   type="checkbox"
                   checked={form.isActive}
                   onChange={(e) =>
-                    setForm({
-                      ...form,
-                      isActive: e.target.checked,
-                    })
+                    setForm({ ...form, isActive: e.target.checked })
                   }
                 />
                 <span>Active</span>
