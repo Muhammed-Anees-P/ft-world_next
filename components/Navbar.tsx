@@ -74,7 +74,7 @@ export default function Navbar() {
     <nav className="w-full bg-white shadow-sm">
       <Container className="flex items-center justify-between py-3">
         {/* LOGO */}
-        <Link href="/" className="flex items-center">
+        <Link href="/" className="flex items-center flex-shrink-0">
           <Image
             src="/ft-world_logo.png"
             alt="Company Logo"
@@ -86,7 +86,7 @@ export default function Navbar() {
 
         {/* SEARCH */}
         <div className="hidden md:flex flex-1 mx-10 max-w-2xl">
-          <div className="relative w-full">
+          <div className="relative w-[1920px]">
             <Search
               className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
               size={18}
@@ -108,14 +108,11 @@ export default function Navbar() {
         </div>
 
         {/* RIGHT ICON GROUP */}
-        <div
-          className="hidden md:flex items-center"
-          style={{ marginRight: "-100px" }}
-        >
+        <div className="hidden md:flex items-center flex-shrink-0 gap-3.5">
           {/* CATEGORY */}
           <Link
             href="/categories"
-            className="w-10 h-10 rounded-full bg-[#5B2758] flex items-center justify-center text-white hover:opacity-95 transition mx-5"
+            className="w-10 h-10 rounded-full bg-[#5B2758] flex items-center justify-center text-white hover:opacity-95 transition"
           >
             <LayoutGrid size={16} />
           </Link>
@@ -123,7 +120,7 @@ export default function Navbar() {
           {/* SUPPORT */}
           <Link
             href="/support"
-            className="w-10 h-10 rounded-full bg-[#5B2758] flex items-center justify-center text-white hover:opacity-95 transition mx-5"
+            className="w-10 h-10 rounded-full bg-[#5B2758] flex items-center justify-center text-white hover:opacity-95 transition"
           >
             <Headphones size={16} />
           </Link>
@@ -131,18 +128,18 @@ export default function Navbar() {
           {/* CART */}
           <Link
             href="/cart"
-            className="w-10 h-10 rounded-full bg-[#5B2758] flex items-center justify-center text-white hover:opacity-95 transition mx-5"
+            className="w-10 h-10 rounded-full bg-[#5B2758] flex items-center justify-center text-white hover:opacity-95 transition"
           >
             <ShoppingCart size={16} />
           </Link>
 
           {/* USER */}
           <div
-            className="relative mx-2"
+            className="relative"
             onMouseEnter={() => handleEnter("user")}
             onMouseLeave={handleLeave}
           >
-            <div className="w-10 h-10 rounded-full bg-[#5B2758] flex items-center justify-center text-white cursor-pointer hover:opacity-95 transition mx-5">
+            <div className="w-10 h-10 rounded-full bg-[#5B2758] flex items-center justify-center text-white cursor-pointer hover:opacity-95 transition">
               <User size={16} />
             </div>
 
@@ -176,34 +173,35 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* HAMBURGER */}
-          <div style={{ marginLeft: "90px" }}>
-            <div
-              className="relative"
-              onMouseEnter={() => handleEnter("menu")}
-              onMouseLeave={handleLeave}
-            >
-              <div className="w-10 h-10 rounded-full bg-[#5B2758] flex items-center justify-center text-white cursor-pointer hover:opacity-95 transition">
-                <Menu size={16} />
-              </div>
+          {/* DIVIDER */}
+          <div className=" mx-8" />
 
-              {activeDropdown === "menu" && (
-                <div className="absolute right-0 mt-3 w-44 bg-[#D9D9D9] rounded-xl shadow-lg py-3 animate-dropdown z-50">
-                  <Link
-                    href="/about"
-                    className="block px-4 py-2 hover:bg-gray-200 text-sm"
-                  >
-                    About Us
-                  </Link>
-                  <Link
-                    href="/contact"
-                    className="block px-4 py-2 hover:bg-gray-200 text-sm"
-                  >
-                    Contact Us
-                  </Link>
-                </div>
-              )}
+          {/* HAMBURGER */}
+          <div
+            className="relative"
+            onMouseEnter={() => handleEnter("menu")}
+            onMouseLeave={handleLeave}
+          >
+            <div className="w-10 h-10 rounded-full bg-[#5B2758] flex items-center justify-center text-white cursor-pointer hover:opacity-95 transition">
+              <Menu size={16} />
             </div>
+
+            {activeDropdown === "menu" && (
+              <div className="absolute right-0 mt-3 w-44 bg-[#D9D9D9] rounded-xl shadow-lg py-3 animate-dropdown z-50">
+                <Link
+                  href="/about"
+                  className="block px-4 py-2 hover:bg-gray-200 text-sm"
+                >
+                  About Us
+                </Link>
+                <Link
+                  href="/contact"
+                  className="block px-4 py-2 hover:bg-gray-200 text-sm"
+                >
+                  Contact Us
+                </Link>
+              </div>
+            )}
           </div>
         </div>
 
