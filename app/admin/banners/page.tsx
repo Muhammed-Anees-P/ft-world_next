@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Plus, X } from "lucide-react";
 import AXIOS from "@/lib/axios";
 import toast from "react-hot-toast";
 import Swal from "sweetalert2";
@@ -19,14 +19,17 @@ export default function BannerPage() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
 
-  const [form, setForm] = useState<{
-    title?: string;
-    imageUrl?: string;
-    description?: string;
-    isActive?: boolean;
-  }>({});
-
+  const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  const initialForm = {
+    title: "",
+    imageUrl: "",
+    description: "",
+    isActive: true,
+  };
+
+  const [form, setForm] = useState(initialForm);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,6 +40,10 @@ export default function BannerPage() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
   );
+
+  useEffect(() => {
+    fetchBanners();
+  }, []);
 
   const fetchBanners = async () => {
     try {
@@ -49,9 +56,28 @@ export default function BannerPage() {
     }
   };
 
-  useEffect(() => {
-    fetchBanners();
-  }, []);
+  const openModal = (banner?: Banner) => {
+    if (banner) {
+      setEditingId(banner._id);
+      setForm({
+        title: banner.title || "",
+        imageUrl: banner.imageUrl || "",
+        description: banner.description || "",
+        isActive: banner.isActive ?? true,
+      });
+    } else {
+      setEditingId(null);
+      setForm(initialForm);
+    }
+
+    setIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
+    setEditingId(null);
+    setForm(initialForm);
+  };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
@@ -62,11 +88,16 @@ export default function BannerPage() {
 
     try {
       setUploading(true);
+
       const res = await AXIOS.post("/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      setForm({ ...form, imageUrl: res.data.url });
+      setForm((prev) => ({
+        ...prev,
+        imageUrl: res.data.url,
+      }));
+
       toast.success("Image uploaded successfully");
     } catch {
       toast.error("Image upload failed");
@@ -97,22 +128,11 @@ export default function BannerPage() {
         toast.success("Banner created successfully");
       }
 
-      setForm({});
-      setEditingId(null);
       fetchBanners();
+      closeModal();
     } catch {
       toast.error("Error saving banner");
     }
-  };
-
-  const handleEdit = (banner: Banner) => {
-    setForm({
-      title: banner.title,
-      imageUrl: banner.imageUrl,
-      description: banner.description,
-      isActive: banner.isActive,
-    });
-    setEditingId(banner._id);
   };
 
   const handleDelete = async (id: string) => {
@@ -137,61 +157,19 @@ export default function BannerPage() {
   };
 
   return (
-    <div className="space-y-10">
-      <h2 className="text-3xl font-bold text-[#542452]">Banner Management</h2>
-
-      {/* Form */}
-      <div className="bg-white p-6 rounded-2xl shadow border">
-        <h3 className="text-lg font-semibold mb-4">
-          {editingId ? "Edit Banner" : "Create Banner"}
-        </h3>
-
-        <div className="grid md:grid-cols-2 gap-4">
-          <input
-            type="text"
-            placeholder="Title"
-            value={form.title || ""}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-            className="p-3 border rounded-xl focus:ring-2 focus:ring-[#542452]"
-          />
-
-          <input
-            type="text"
-            placeholder="Description"
-            value={form.description || ""}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-            className="p-3 border rounded-xl focus:ring-2 focus:ring-[#542452]"
-          />
-
-          <div>
-            <input type="file" onChange={handleFileUpload} />
-            {uploading && (
-              <p className="text-sm text-gray-500 mt-1">Uploading...</p>
-            )}
-            {form.imageUrl && (
-              <img src={form.imageUrl} className="w-32 mt-3 rounded-lg" />
-            )}
-          </div>
-
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={form.isActive || false}
-              onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
-            />
-            <span>Active</span>
-          </div>
-        </div>
+    <div className="space-y-8">
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-bold text-[#542452]">Banner Management</h2>
 
         <button
-          onClick={handleSubmit}
-          className="mt-5 bg-[#542452] text-white px-6 py-3 rounded-xl"
+          onClick={() => openModal()}
+          className="bg-[#542452] text-white px-5 py-3 rounded-xl flex items-center gap-2"
         >
-          {editingId ? "Update" : "Create"}
+          <Plus size={18} /> Add Banner
         </button>
       </div>
 
-      {/* Table */}
+      {/* TABLE */}
       <div className="bg-white rounded-2xl shadow border overflow-hidden">
         <table className="w-full text-left">
           <thead className="bg-gray-50 text-sm text-gray-600">
@@ -240,7 +218,7 @@ export default function BannerPage() {
                       className={`px-3 py-1 text-xs rounded-full ${
                         banner.isActive
                           ? "bg-green-100 text-green-600"
-                          : "bg-gray-200 text-gray-500"
+                          : "bg-red-100 text-red-600"
                       }`}
                     >
                       {banner.isActive ? "Active" : "Inactive"}
@@ -249,7 +227,7 @@ export default function BannerPage() {
 
                   <td className="p-4 text-right space-x-3">
                     <button
-                      onClick={() => handleEdit(banner)}
+                      onClick={() => openModal(banner)}
                       className="text-blue-500 hover:text-blue-700"
                     >
                       <Pencil size={18} />
@@ -269,7 +247,7 @@ export default function BannerPage() {
         </table>
       </div>
 
-      {/* Pagination */}
+      {/* PAGINATION */}
       <div className="flex justify-center gap-3">
         {Array.from({ length: totalPages }, (_, i) => (
           <button
@@ -283,6 +261,78 @@ export default function BannerPage() {
           </button>
         ))}
       </div>
+
+      {/* MODAL */}
+      {isOpen && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white w-full max-w-xl rounded-2xl p-6 relative">
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 text-gray-500"
+            >
+              <X />
+            </button>
+
+            <h3 className="text-xl font-semibold mb-6">
+              {editingId ? "Edit Banner" : "Add Banner"}
+            </h3>
+
+            <div className="space-y-4">
+              <input
+                type="text"
+                placeholder="Title"
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-[#542452]"
+              />
+
+              <input
+                type="text"
+                placeholder="Description"
+                value={form.description}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    description: e.target.value,
+                  })
+                }
+                className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-[#542452]"
+              />
+
+              <div>
+                <input type="file" onChange={handleFileUpload} />
+                {uploading && (
+                  <p className="text-sm text-gray-500 mt-1">Uploading...</p>
+                )}
+                {form.imageUrl && (
+                  <img src={form.imageUrl} className="w-32 mt-3 rounded-lg" />
+                )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={form.isActive}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      isActive: e.target.checked,
+                    })
+                  }
+                />
+                <span>Active</span>
+              </div>
+            </div>
+
+            <button
+              onClick={handleSubmit}
+              className="mt-6 bg-[#542452] text-white px-6 py-3 rounded-xl"
+            >
+              {editingId ? "Update Banner" : "Create Banner"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
