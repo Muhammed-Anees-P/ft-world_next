@@ -1,10 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Pencil, Trash2, Plus, X } from "lucide-react";
-import AXIOS from "@/lib/axios";
 import toast from "react-hot-toast";
 import Swal from "sweetalert2";
+import {
+  getBanners,
+  createBanner,
+  updateBanner,
+  deleteBanner,
+  uploadImage,
+} from "@/services/bannerService";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useBannerUIStore } from "@/zustand/useBannerUIStore";
 
 interface Banner {
   _id: string;
@@ -15,12 +23,10 @@ interface Banner {
 }
 
 export default function BannerPage() {
-  const [banners, setBanners] = useState<Banner[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
+  const queryClient = useQueryClient();
+  const { isOpen, editingId, openModal, closeModal } = useBannerUIStore();
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const initialForm = {
     title: "",
@@ -31,130 +37,88 @@ export default function BannerPage() {
 
   const [form, setForm] = useState(initialForm);
 
-  // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  /* ================= FETCH ================= */
 
-  const totalPages = Math.ceil(banners.length / itemsPerPage);
-  const paginatedBanners = banners.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
+  const { data: banners = [], isLoading } = useQuery({
+    queryKey: ["banners"],
+    queryFn: getBanners,
+  });
 
-  useEffect(() => {
-    fetchBanners();
-  }, []);
+  /* ================= MUTATIONS ================= */
 
-  const fetchBanners = async () => {
-    try {
-      const res = await AXIOS.get("/banner");
-      setBanners(res.data.data);
-    } catch {
-      toast.error("Failed to fetch banners");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const createMutation = useMutation({
+    mutationFn: createBanner,
+    onSuccess: () => {
+      toast.success("Banner created successfully");
+      queryClient.invalidateQueries({ queryKey: ["banners"] });
+      closeModal();
+    },
+  });
 
-  const openModal = (banner?: Banner) => {
-    if (banner) {
-      setEditingId(banner._id);
-      setForm({
-        title: banner.title || "",
-        imageUrl: banner.imageUrl || "",
-        description: banner.description || "",
-        isActive: banner.isActive ?? true,
-      });
-    } else {
-      setEditingId(null);
-      setForm(initialForm);
-    }
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: any) => updateBanner(id, data),
+    onSuccess: () => {
+      toast.success("Banner updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["banners"] });
+      closeModal();
+    },
+  });
 
-    setIsOpen(true);
-  };
+  const deleteMutation = useMutation({
+    mutationFn: deleteBanner,
+    onSuccess: () => {
+      toast.success("Banner deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["banners"] });
+    },
+  });
 
-  const closeModal = () => {
-    setIsOpen(false);
-    setEditingId(null);
-    setForm(initialForm);
-  };
+  /* ================= HANDLERS ================= */
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      setUploading(true);
-
-      const res = await AXIOS.post("/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      setForm((prev) => ({
-        ...prev,
-        imageUrl: res.data.url,
-      }));
-
-      toast.success("Image uploaded successfully");
-    } catch {
-      toast.error("Image upload failed");
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!form.imageUrl) {
       toast.error("Please upload an image");
       return;
     }
 
-    const payload = {
-      title: form.title,
-      imageUrl: form.imageUrl,
-      description: form.description,
-      isActive: form.isActive,
-    };
-
-    try {
-      if (editingId) {
-        await AXIOS.patch(`/banner/${editingId}`, payload);
-        toast.success("Banner updated successfully");
-      } else {
-        await AXIOS.post("/banner", payload);
-        toast.success("Banner created successfully");
-      }
-
-      fetchBanners();
-      closeModal();
-    } catch {
-      toast.error("Error saving banner");
+    if (editingId) {
+      updateMutation.mutate({
+        id: editingId,
+        data: form,
+      });
+    } else {
+      createMutation.mutate(form);
     }
   };
 
   const handleDelete = async (id: string) => {
     const result = await Swal.fire({
       title: "Delete Banner?",
-      text: "This action cannot be undone.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#542452",
-      confirmButtonText: "Delete",
     });
 
     if (!result.isConfirmed) return;
 
+    deleteMutation.mutate(id);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.length) return;
+
     try {
-      await AXIOS.delete(`/banner/${id}`);
-      toast.success("Banner deleted successfully");
-      fetchBanners();
+      setUploading(true);
+      const url = await uploadImage(e.target.files[0]);
+      setForm((prev) => ({ ...prev, imageUrl: url }));
+      toast.success("Image uploaded successfully");
     } catch {
-      toast.error("Delete failed");
+      toast.error("Upload failed");
+    } finally {
+      setUploading(false);
     }
   };
+
+  /* ================= UI ================= */
 
   return (
     <div className="space-y-8">
@@ -162,7 +126,10 @@ export default function BannerPage() {
         <h2 className="text-3xl font-bold text-[#542452]">Banner Management</h2>
 
         <button
-          onClick={() => openModal()}
+          onClick={() => {
+            setForm(initialForm);
+            openModal();
+          }}
           className="bg-[#542452] text-white px-5 py-3 rounded-xl flex items-center gap-2"
         >
           <Plus size={18} /> Add Banner
@@ -183,20 +150,20 @@ export default function BannerPage() {
           </thead>
 
           <tbody>
-            {loading ? (
+            {isLoading ? (
               <tr>
                 <td colSpan={5} className="p-6 text-center">
                   Loading...
                 </td>
               </tr>
-            ) : paginatedBanners.length === 0 ? (
+            ) : banners.length === 0 ? (
               <tr>
                 <td colSpan={5} className="p-6 text-center">
                   No banners found
                 </td>
               </tr>
             ) : (
-              paginatedBanners.map((banner) => (
+              banners.map((banner: Banner) => (
                 <tr key={banner._id} className="border-t">
                   <td className="p-4">
                     <img
@@ -227,15 +194,23 @@ export default function BannerPage() {
 
                   <td className="p-4 text-right space-x-3">
                     <button
-                      onClick={() => openModal(banner)}
-                      className="text-blue-500 hover:text-blue-700"
+                      onClick={() => {
+                        setForm({
+                          title: banner.title ?? "",
+                          imageUrl: banner.imageUrl ?? "",
+                          description: banner.description ?? "",
+                          isActive: banner.isActive ?? true,
+                        });
+                        openModal(banner._id);
+                      }}
+                      className="text-blue-500"
                     >
                       <Pencil size={18} />
                     </button>
 
                     <button
                       onClick={() => handleDelete(banner._id)}
-                      className="text-red-500 hover:text-red-700"
+                      className="text-red-500"
                     >
                       <Trash2 size={18} />
                     </button>
@@ -245,21 +220,6 @@ export default function BannerPage() {
             )}
           </tbody>
         </table>
-      </div>
-
-      {/* PAGINATION */}
-      <div className="flex justify-center gap-3">
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentPage(i + 1)}
-            className={`px-4 py-2 rounded-lg ${
-              currentPage === i + 1 ? "bg-[#542452] text-white" : "bg-gray-200"
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
       </div>
 
       {/* MODAL */}
@@ -279,35 +239,27 @@ export default function BannerPage() {
 
             <div className="space-y-4">
               <input
-                type="text"
                 placeholder="Title"
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
-                className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-[#542452]"
+                className="w-full p-3 border rounded-xl"
               />
 
               <input
-                type="text"
                 placeholder="Description"
                 value={form.description}
                 onChange={(e) =>
-                  setForm({
-                    ...form,
-                    description: e.target.value,
-                  })
+                  setForm({ ...form, description: e.target.value })
                 }
-                className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-[#542452]"
+                className="w-full p-3 border rounded-xl"
               />
 
-              <div>
-                <input type="file" onChange={handleFileUpload} />
-                {uploading && (
-                  <p className="text-sm text-gray-500 mt-1">Uploading...</p>
-                )}
-                {form.imageUrl && (
-                  <img src={form.imageUrl} className="w-32 mt-3 rounded-lg" />
-                )}
-              </div>
+              <input type="file" onChange={handleFileUpload} />
+              {uploading && <p>Uploading...</p>}
+
+              {form.imageUrl && (
+                <img src={form.imageUrl} className="w-32 mt-3 rounded-lg" />
+              )}
 
               <div className="flex items-center gap-2">
                 <input
