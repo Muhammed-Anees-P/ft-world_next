@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Container from "./Container";
-import AXIOS from "@/lib/axios";
+import { useQuery } from "@tanstack/react-query";
+import { categoriesQuery } from "@/hooks/userCategoriesQuery";
 
 interface Category {
   _id: string;
@@ -15,9 +16,11 @@ interface Category {
 
 export default function CategoriesSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
   const [showArrows, setShowArrows] = useState(false);
+
+  const { data = [], isLoading } = useQuery(categoriesQuery());
+
+  const categories: Category[] = data.filter((cat: Category) => cat?.isActive);
 
   const checkOverflow = () => {
     if (!scrollRef.current) return;
@@ -36,30 +39,13 @@ export default function CategoriesSection() {
     });
   };
 
-  const fetchCategories = async () => {
-    try {
-      const res = await AXIOS.get("/categories");
-      const data = res.data.data || [];
-      const activeCategories = data.filter((cat: Category) => cat?.isActive);
-      setCategories(activeCategories);
-    } catch {
-      console.error("Failed to fetch categories");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
   useEffect(() => {
     checkOverflow();
     window.addEventListener("resize", checkOverflow);
     return () => window.removeEventListener("resize", checkOverflow);
   }, [categories]);
 
-  if (loading) return null;
+  if (isLoading) return null;
   if (categories.length === 0) return null;
 
   return (
