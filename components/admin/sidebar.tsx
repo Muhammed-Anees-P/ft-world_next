@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Image, Grid3X3, LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  Image,
+  Grid3X3,
+  LogOut,
+  ShoppingCartIcon,
+} from "lucide-react";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -11,6 +17,7 @@ export default function Sidebar() {
     { name: "Dashboard", path: "/admin", icon: LayoutDashboard },
     { name: "Banners", path: "/admin/banners", icon: Image },
     { name: "Categories", path: "/admin/categories", icon: Grid3X3 },
+    { name: "Products", path: "/admin/products", icon: ShoppingCartIcon },
   ];
 
   return (
