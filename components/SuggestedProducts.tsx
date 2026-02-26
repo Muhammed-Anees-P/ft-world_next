@@ -154,20 +154,20 @@ export default function SuggestedProducts() {
                     color: "#000",
                   }}
                 >
-                  ₹{product.dicountPrice}
+                  ₹{product.discountPrice}
                 </span>
 
                 {product.originalPrice && (
-                <span
-                  style={{
-                    fontSize: "19px",
-                    textDecoration: "line-through",
-                    color: "#777",
-                  }}
-                >
-                  ₹{product.originalPrice}
-                </span>
-                 )} 
+                  <span
+                    style={{
+                      fontSize: "19px",
+                      textDecoration: "line-through",
+                      color: "#777",
+                    }}
+                  >
+                    ₹{product.originalPrice}
+                  </span>
+                )}
               </div>
             </div>
           ))}
