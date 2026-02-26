@@ -154,10 +154,10 @@ export default function SuggestedProducts() {
                     color: "#000",
                   }}
                 >
-                  ₹{product.price}
+                  ₹{product.dicountPrice}
                 </span>
 
-                {/* {product.originalPrice && ( */}
+                {product.originalPrice && (
                 <span
                   style={{
                     fontSize: "19px",
@@ -165,9 +165,9 @@ export default function SuggestedProducts() {
                     color: "#777",
                   }}
                 >
-                  {/* ₹{product.originalPrice} */}₹{500}
+                  ₹{product.originalPrice}
                 </span>
-                {/* )} */}
+                 )} 
               </div>
             </div>
           ))}

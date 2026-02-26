@@ -5,11 +5,12 @@ export interface IProduct {
   name: string;
   slug: string;
   description?: string;
-  price: number;
+  dicountPrice: number;
+  originalPrice: number;
   stock: number;
   category: ICategory;
   images: string[];
   isActive: boolean;
   isSuggestedForHome?: boolean;
-  isOffer?:boolean
+  isOffer?: boolean;
 }

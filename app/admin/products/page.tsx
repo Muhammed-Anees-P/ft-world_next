@@ -36,7 +36,8 @@ export default function ProductsPage() {
     description: "",
     category: "",
     images: [] as string[],
-    price: "",
+    dicountPrice: "",
+    originalPrice: "",
     stock: "",
     isActive: true,
     isSuggestedForHome: false,
@@ -84,7 +85,8 @@ export default function ProductsPage() {
         description: product.description || "",
         category: product.category?._id || "",
         images: product.images || [],
-        price: product.price.toString(),
+        dicountPrice: product.dicountPrice.toString(),
+        originalPrice: product.originalPrice.toString(),
         stock: product.stock.toString(),
         isActive: product.isActive ?? true,
         isSuggestedForHome: product.isSuggestedForHome ?? false,
@@ -137,7 +139,12 @@ export default function ProductsPage() {
   // ================= SUBMIT =================
 
   const handleSubmit = () => {
-    if (!form.name || !form.price || !form.category) {
+    if (
+      !form.name ||
+      !form.dicountPrice ||
+      !form.category ||
+      !form.originalPrice
+    ) {
       toast.error("Required fields missing");
       return;
     }
@@ -148,7 +155,8 @@ export default function ProductsPage() {
       description: form.description,
       category: form.category,
       images: form.images,
-      price: Number(form.price),
+      price: Number(form.dicountPrice),
+      originalPrice: Number(form.originalPrice),
       stock: Number(form.stock),
       isActive: form.isActive,
       isSuggestedForHome: form.isSuggestedForHome,
@@ -219,7 +227,7 @@ export default function ProductsPage() {
                   </td>
                   <td className="p-4">{p.name}</td>
                   <td className="p-4">{p.category?.name}</td>
-                  <td className="p-4">${p.price}</td>
+                  <td className="p-4">${p.dicountPrice}</td>
                   <td className="p-4">{p.stock}</td>
                   <td className="p-4">
                     <span
@@ -296,9 +304,20 @@ export default function ProductsPage() {
               </select>
 
               <input
-                placeholder="Price"
-                value={form.price}
-                onChange={(e) => setForm({ ...form, price: e.target.value })}
+                placeholder="Price after discount"
+                value={form.dicountPrice}
+                onChange={(e) =>
+                  setForm({ ...form, dicountPrice: e.target.value })
+                }
+                className="p-3 border rounded-xl"
+              />
+
+              <input
+                placeholder="Price before discount (Original Price)"
+                value={form.originalPrice}
+                onChange={(e) =>
+                  setForm({ ...form, originalPrice: e.target.value })
+                }
                 className="p-3 border rounded-xl"
               />
 
