@@ -1,126 +1,127 @@
 "use client";
 
 import Image from "next/image";
-import Container from "./Container";
-
-const products = [
-  {
-    title: "BlinkOutdoor HD camera",
-    description:
-      "The Develop ineo+ 251i is a cost-effective A3 colour multifunction printer ideal for small to medium offices. Priced at £1950 or £40 per month, it delivers 25 ppm in colour and black & white. It supports copy, print, and scan (FTP, SMB, WebDAV, email), duplex printing, mobile connectivity (Android/iOS), and features a 10.1-inch touch panel. Compact yet versatile, it handles up to 300gsm paper, includes full toners, and comes with a comprehensive service plan.",
-    priceOld: "35,975",
-    priceNew: "34,900",
-    images: ["/vf1.jpg", "/vf2.jpg", "/vf3.jpg"],
-    rating: "4.3",
-    reverse: false,
-  },
-  {
-    title: "Smart Digital Door Lock",
-    description:
-      "Secure your home with advanced biometric authentication and smart locking technology. Designed for durability and style, this door lock supports PIN, fingerprint, and mobile app access with long battery life and emergency key support.",
-    priceOld: "42,500",
-    priceNew: "39,999",
-    images: ["/vf4.jpg", "/vf5.jpg", "/vf6.jpg"],
-    rating: "4.2",
-    reverse: true,
-  },
-];
+import Container from "@/components/Container";
 
 export default function ValueForMoneySection() {
   return (
-    <section className="w-full  bg-[#FFFFFF]  py-20">
+    <section className="w-full py-16 bg-white">
       <Container>
-        <h2 className="text-2xl md:text-3xl font-semibold mb-14">
+        {/* HEADING */}
+        <h2
+          className="text-center lg:text-left"
+          style={{
+            fontFamily: "Poppins, sans-serif",
+            fontWeight: 500,
+            fontSize: "40px",
+            lineHeight: "100%",
+          }}
+        >
           Value For Money
         </h2>
 
-        <div className="space-y-20">
-          {products.map((product, index) => (
-            <div
-              key={index}
-              className={`flex flex-col lg:flex-row gap-12 items-center ${
-                product.reverse ? "lg:flex-row-reverse" : ""
-              }`}
-            >
-              {/* Images */}
-              <div className="flex-1 w-full">
-                {/* ===== MOBILE SLIDER ===== */}
-                <div className="flex sm:hidden overflow-x-auto scroll-smooth snap-x snap-mandatory gap-4 pb-4">
-                  {product.images.map((img, i) => (
-                    <div
-                      key={i}
-                      className="relative min-w-[85%] aspect-[4/3] snap-center rounded-xl overflow-hidden shadow-md"
-                    >
-                      <Image
-                        src={img}
-                        alt={product.title}
-                        fill
-                        className="object-cover"
-                        sizes="100vw"
-                      />
-
-                      {/* Rating badge */}
-                      {i === product.images.length - 1 && (
-                        <div className="absolute bottom-3 right-3 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-medium">
-                          {product.rating} ★
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                {/* ===== DESKTOP GRID ===== */}
-                <div className="hidden sm:grid grid-cols-3 gap-4">
-                  {product.images.map((img, i) => (
-                    <div
-                      key={i}
-                      className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-md"
-                    >
-                      <Image
-                        src={img}
-                        alt={product.title}
-                        fill
-                        className="object-cover"
-                        sizes="33vw"
-                      />
-
-                      {i === product.images.length - 1 && (
-                        <div className="absolute bottom-3 right-3 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-medium">
-                          {product.rating} ★
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
+        {/* MAIN WRAPPER */}
+        <div className="flex flex-col lg:flex-row gap-12 mt-14">
+          {/* ================= LEFT IMAGE GRID ================= */}
+          <div className="w-full lg:w-[60%] flex flex-col gap-[23px]">
+            {/* TOP ROW */}
+            <div className="flex flex-col sm:flex-row gap-[23px]">
+              <div className="relative w-full sm:w-[70%] h-[200px] sm:h-[201px] rounded-[20px] overflow-hidden bg-[#BE6161]">
+                <Image
+                  src="/sample1.jpg"
+                  alt="img1"
+                  fill
+                  className="object-cover"
+                />
               </div>
 
-              {/* Content */}
-              <div className="flex-1 space-y-6">
-                <h3 className="text-xl md:text-2xl font-semibold">
-                  {product.title}
-                </h3>
-
-                <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-                  {product.description}
-                </p>
-
-                {/* Price Section */}
-                <div className="flex items-center gap-4 flex-wrap">
-                  <span className="line-through text-gray-400 text-lg">
-                    {product.priceOld}
-                  </span>
-
-                  <span className="text-2xl font-bold">{product.priceNew}</span>
-
-                  <span className="text-green-600 text-xl">↓</span>
-
-                  <button className="ml-auto bg-linear-to-r from-[#7A2E7A] to-[#C53BD2] text-white px-6 py-2 rounded-lg shadow-md hover:opacity-90 transition">
-                    Buy Now
-                  </button>
-                </div>
+              <div className="relative w-full sm:w-[30%] h-[200px] sm:h-[201px] rounded-[20px] overflow-hidden bg-[#BE6161]">
+                <Image
+                  src="/sample2.jpg"
+                  alt="img2"
+                  fill
+                  className="object-cover"
+                />
               </div>
             </div>
-          ))}
+
+            {/* BOTTOM ROW */}
+            <div className="flex flex-col sm:flex-row gap-[23px]">
+              <div className="relative w-full sm:w-[25%] h-[200px] rounded-[20px] overflow-hidden bg-[#BE6161]">
+                <Image
+                  src="/sample3.jpg"
+                  alt="img3"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+
+              <div className="relative w-full sm:w-[25%] h-[200px] rounded-[20px] overflow-hidden bg-[#BE6161]">
+                <Image
+                  src="/sample4.jpg"
+                  alt="img4"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+
+              <div className="relative w-full sm:w-[50%] h-[200px] rounded-[20px] overflow-hidden bg-[#BE6161]">
+                <Image
+                  src="/sample5.jpg"
+                  alt="img5"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* ================= RIGHT CONTENT ================= */}
+          <div className="w-full lg:w-[40%] flex flex-col justify-center gap-[25px]">
+            {/* PRODUCT NAME */}
+            <h3
+              style={{
+                fontFamily: "Poppins, sans-serif",
+                fontWeight: 600,
+                fontSize: "28px",
+                lineHeight: "100%",
+              }}
+            >
+              BlinkOutdoor HD camera
+            </h3>
+
+            {/* DESCRIPTION */}
+            <p
+              className="text-gray-600 text-sm leading-relaxed"
+              style={{
+                fontFamily: "Poppins, sans-serif",
+              }}
+            >
+              The Develop Ineo+ 251i is a cost-effective A3 colour multifunction
+              printer ideal for small to medium offices. It delivers 25 ppm in
+              colour and black & white, supports copy, print and scan with
+              advanced mobile connectivity.
+            </p>
+
+            {/* PRICE */}
+            <div className="flex items-center gap-4">
+              <span className="text-green-600 text-lg font-medium">30% ↓</span>
+
+              <span className="text-gray-400 line-through">₹35,975</span>
+
+              <span className="text-2xl font-semibold">₹34,900</span>
+            </div>
+
+            {/* BUY NOW */}
+            <button
+              className="w-[277px] h-[48px] rounded-[10px] text-white"
+              style={{
+                background: "#542452",
+              }}
+            >
+              Buy Now
+            </button>
+          </div>
         </div>
       </Container>
     </section>
