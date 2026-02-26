@@ -29,6 +29,7 @@ export default function ProductsPage() {
   const [uploading, setUploading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [shouldCloseAfterUpdate, setShouldCloseAfterUpdate] = useState(false);
 
   const initialForm = {
     name: "",
@@ -63,7 +64,11 @@ export default function ProductsPage() {
     onSuccess: () => {
       toast.success("Product updated");
       queryClient.invalidateQueries({ queryKey: ["products"] });
-      closeModal();
+
+      if (shouldCloseAfterUpdate) {
+        closeModal();
+        setShouldCloseAfterUpdate(false);
+      }
     },
   });
 
@@ -122,10 +127,25 @@ export default function ProductsPage() {
         uploaded.push(url);
       }
 
+      const updatedImages = [...form.images, ...uploaded];
+
       setForm((prev) => ({
         ...prev,
-        images: [...prev.images, ...uploaded],
+        images: updatedImages,
       }));
+
+      if (editingId) {
+        updateMutation.mutate({
+          id: editingId,
+          data: {
+            ...form,
+            images: updatedImages,
+            discountPrice: Number(form.discountPrice),
+            originalPrice: Number(form.originalPrice),
+            stock: Number(form.stock),
+          },
+        });
+      }
 
       toast.success("Images uploaded");
     } catch {
@@ -184,6 +204,7 @@ export default function ProductsPage() {
     };
 
     if (editingId) {
+      setShouldCloseAfterUpdate(true);
       updateMutation.mutate({ id: editingId, data: payload });
     } else {
       createMutation.mutate(payload);
