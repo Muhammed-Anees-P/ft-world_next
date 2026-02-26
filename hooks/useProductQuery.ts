@@ -2,7 +2,10 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 import AXIOS from "@/lib/axios";
 import { useProductStore } from "@/store/productStore";
 import { useEffect } from "react";
-import { listSuggestedProducts } from "@/services/productServices";
+import {
+  listOfferProducts,
+  listSuggestedProducts,
+} from "@/services/productServices";
 
 export const useProductQuery = () => {
   const setProducts = useProductStore((state) => state.setProducts);
@@ -28,4 +31,10 @@ export const useSuggestedProductListQuery = () =>
   queryOptions({
     queryKey: ["suggested-products"],
     queryFn: listSuggestedProducts,
+  });
+
+export const useOfferProductListQuery = () =>
+  queryOptions({
+    queryKey: ["offer-products"],
+    queryFn: listOfferProducts,
   });
