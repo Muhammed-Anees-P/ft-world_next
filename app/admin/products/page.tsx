@@ -286,6 +286,15 @@ export default function ProductsPage() {
                 className="p-3 border rounded-xl"
               />
 
+              <textarea
+                placeholder="Product Description"
+                value={form.description}
+                onChange={(e) =>
+                  setForm({ ...form, description: e.target.value })
+                }
+                className="p-3 border rounded-xl"
+              />
+
               <input
                 placeholder="Slug"
                 value={form.slug}
