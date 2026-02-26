@@ -42,6 +42,7 @@ export default function ProductsPage() {
     isActive: true,
     isSuggestedForHome: false,
     isOffer: false,
+    offerDescription: "",
   };
 
   const [form, setForm] = useState(initialForm);
@@ -91,6 +92,7 @@ export default function ProductsPage() {
         isActive: product.isActive ?? true,
         isSuggestedForHome: product.isSuggestedForHome ?? false,
         isOffer: product.isOffer ?? false,
+        offerDescription: product.offerDescription || "",
       });
     } else {
       setEditingId(null);
@@ -155,12 +157,13 @@ export default function ProductsPage() {
       description: form.description,
       category: form.category,
       images: form.images,
-      price: Number(form.dicountPrice),
+      discountPrice: Number(form.dicountPrice),
       originalPrice: Number(form.originalPrice),
       stock: Number(form.stock),
       isActive: form.isActive,
       isSuggestedForHome: form.isSuggestedForHome,
       isOffer: form.isOffer,
+      offerDescription: form.offerDescription,
     };
 
     if (editingId) {
@@ -359,6 +362,19 @@ export default function ProductsPage() {
                   }
                 />
                 <span>Offer Section(Home Page)</span>
+
+                {form.isOffer && (
+                  <div className="col-span-2">
+                    <input
+                      placeholder="Offer Description (Ex: Min 10% Off)"
+                      value={form.offerDescription}
+                      onChange={(e) =>
+                        setForm({ ...form, offerDescription: e.target.value })
+                      }
+                      className="p-3 border rounded-xl w-full"
+                    />
+                  </div>
+                )}
               </div>
 
               <input type="file" multiple onChange={handleFileUpload} />
