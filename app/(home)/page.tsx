@@ -2,6 +2,7 @@ import CategoriesSection from "@/components/CategoriesSection";
 import Footer from "@/components/Footer";
 import HeroSlider from "@/components/HeroSlider";
 import Navbar from "@/components/Navbar";
+import OffersSection from "@/components/OffersSection";
 import OurProductsSection from "@/components/OurProductsSection";
 import SuggestedProducts from "@/components/SuggestedProducts";
 import ValueForMoneySection from "@/components/ValueForMoneySection";
@@ -14,8 +15,8 @@ const HomePage = () => {
       <CategoriesSection />
       <HeroSlider />
       <SuggestedProducts />
-      
-      
+      <OffersSection />
+
       <OurProductsSection />
       <ValueForMoneySection />
       <Footer />
