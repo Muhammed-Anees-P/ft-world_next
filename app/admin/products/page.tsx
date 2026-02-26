@@ -36,7 +36,7 @@ export default function ProductsPage() {
     description: "",
     category: "",
     images: [] as string[],
-    dicountPrice: "",
+    discountPrice: "",
     originalPrice: "",
     stock: "",
     isActive: true,
@@ -86,7 +86,7 @@ export default function ProductsPage() {
         description: product.description || "",
         category: product.category?._id || "",
         images: product.images || [],
-        dicountPrice: product.dicountPrice.toString(),
+        discountPrice: product.discountPrice.toString(),
         originalPrice: product.originalPrice.toString(),
         stock: product.stock.toString(),
         isActive: product.isActive ?? true,
@@ -143,7 +143,7 @@ export default function ProductsPage() {
   const handleSubmit = () => {
     if (
       !form.name ||
-      !form.dicountPrice ||
+      !form.discountPrice ||
       !form.category ||
       !form.originalPrice
     ) {
@@ -157,7 +157,7 @@ export default function ProductsPage() {
       description: form.description,
       category: form.category,
       images: form.images,
-      discountPrice: Number(form.dicountPrice),
+      discountPrice: Number(form.discountPrice),
       originalPrice: Number(form.originalPrice),
       stock: Number(form.stock),
       isActive: form.isActive,
@@ -230,7 +230,7 @@ export default function ProductsPage() {
                   </td>
                   <td className="p-4">{p.name}</td>
                   <td className="p-4">{p.category?.name}</td>
-                  <td className="p-4">${p.dicountPrice}</td>
+                  <td className="p-4">${p.discountPrice}</td>
                   <td className="p-4">{p.stock}</td>
                   <td className="p-4">
                     <span
@@ -308,9 +308,9 @@ export default function ProductsPage() {
 
               <input
                 placeholder="Price after discount"
-                value={form.dicountPrice}
+                value={form.discountPrice}
                 onChange={(e) =>
-                  setForm({ ...form, dicountPrice: e.target.value })
+                  setForm({ ...form, discountPrice: e.target.value })
                 }
                 className="p-3 border rounded-xl"
               />
