@@ -71,7 +71,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="w-full bg-white shadow-sm">
+    <nav className="w-full bg-[#FFFFFF] shadow-sm">
       <Container className="flex items-center justify-between py-3">
         {/* LOGO */}
         <Link href="/" className="flex items-center flex-shrink-0">
