@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import Container from "./Container";
 import { useQuery } from "@tanstack/react-query";
 import { categoriesQuery } from "@/hooks/userCategoriesQuery";
@@ -16,135 +15,91 @@ interface Category {
 
 export default function CategoriesSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [showArrows, setShowArrows] = useState(false);
 
   const { data = [], isLoading } = useQuery(categoriesQuery());
 
   const categories: Category[] = data.filter((cat: Category) => cat?.isActive);
 
-  const checkOverflow = () => {
-    if (!scrollRef.current) return;
-    const { scrollWidth, clientWidth } = scrollRef.current;
-    setShowArrows(scrollWidth > clientWidth);
-  };
-
-  const scroll = (direction: "left" | "right") => {
-    if (!scrollRef.current) return;
-
-    const { clientWidth } = scrollRef.current;
-
-    scrollRef.current.scrollBy({
-      left: direction === "left" ? -clientWidth / 1.5 : clientWidth / 1.5,
-      behavior: "smooth",
-    });
-  };
-
-  useEffect(() => {
-    checkOverflow();
-    window.addEventListener("resize", checkOverflow);
-    return () => window.removeEventListener("resize", checkOverflow);
-  }, [categories]);
-
   if (isLoading) return null;
   if (categories.length === 0) return null;
 
   return (
-    <section className="w-full bg-[#F5F5F5] py-16">
+    <section className="w-full bg-[#FFFFFF] py-16">
       <Container>
         <h2
-          className="text-[40px]  leading-none text-left text-black mb-10"
+          className="text-[40px] leading-none text-left text-black mb-10"
           style={{ fontWeight: "400" }}
         >
           Categories
         </h2>
 
-        <div className="relative">
-          {/* LEFT BUTTON */}
-          {showArrows && (
-            <button
-              onClick={() => scroll("left")}
-              className="
-                hidden md:flex
-                absolute left-0 top-1/2 -translate-y-1/2
-                -translate-x-1/2
-                w-10 h-10
-                bg-white border border-gray-200
-                rounded-full
-                items-center justify-center
-                shadow-sm hover:shadow-md
-                transition
-                z-20
-              "
+        <div
+          ref={scrollRef}
+          className="flex gap-2.5 overflow-x-auto scroll-smooth no-scrollbar pl-1 pt-1"
+        >
+          {categories.map((cat) => (
+            <div
+              key={cat._id}
+              className="shrink-0 flex flex-col items-center"
+              style={{
+                width: "220px",
+                height: "196px",
+                gap: "14px",
+              }}
             >
-              <ChevronLeft size={20} />
-            </button>
-          )}
-
-          {/* SCROLL CONTAINER */}
-          <div
-            ref={scrollRef}
-            className="flex gap-8 overflow-x-auto scroll-smooth no-scrollbar"
-          >
-            {categories.map((cat) => (
+              {/* IMAGE CARD */}
               <div
-                key={cat._id}
-                className="flex-shrink-0 w-[276px] flex flex-col items-center group"
+                style={{
+                  width: "220px",
+                  height: "155px",
+                  paddingTop: "15px",
+                  paddingRight: "8px",
+                  paddingBottom: "15px",
+                  paddingLeft: "8px",
+                  borderRadius: "20px",
+                  background: "#FFFFFF",
+                  boxShadow: "0px 0px 4px 0px #00000040",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
               >
-                {/* CARD */}
-                <div
-                  className="
-                    w-full h-[195px]
-                    rounded-[20px]
-                    bg-gradient-to-b from-white to-gray-50
-                    border border-gray-200
-                    shadow-[0px_0px_4px_0px_#00000020]
-                    flex items-center justify-center
-                    transition-all duration-300
-                    group-hover:shadow-[0px_8px_20px_0px_#00000025]
-                    group-hover:-translate-y-2
-                  "
-                >
-                  {cat.imageUrl && (
-                    <div className="relative w-[80%] h-[80%] transition-transform duration-300 group-hover:scale-105">
-                      <Image
-                        src={cat.imageUrl}
-                        alt={cat.name}
-                        fill
-                        sizes="276px"
-                        className="object-contain"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {/* TITLE */}
-                <p className="mt-5 text-base font-medium text-center transition-colors duration-300 group-hover:text-[#542452]">
-                  {cat.name}
-                </p>
+                {cat.imageUrl && (
+                  <div
+                    style={{
+                      position: "relative",
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  >
+                    <Image
+                      src={cat.imageUrl}
+                      alt={cat.name}
+                      fill
+                      sizes="220px"
+                      style={{ objectFit: "contain" }}
+                    />
+                  </div>
+                )}
               </div>
-            ))}
-          </div>
 
-          {/* RIGHT BUTTON */}
-          {showArrows && (
-            <button
-              onClick={() => scroll("right")}
-              className="
-                hidden md:flex
-                absolute right-0 top-1/2 -translate-y-1/2
-                translate-x-1/2
-                w-10 h-10
-                bg-white border border-gray-200
-                rounded-full
-                items-center justify-center
-                shadow-sm hover:shadow-md
-                transition
-                z-20
-              "
-            >
-              <ChevronRight size={20} />
-            </button>
-          )}
+              {/* CATEGORY NAME */}
+              <div
+                style={{
+                  width: "220px",
+                  height: "27px",
+                  fontFamily: "Poppins, sans-serif",
+                  fontWeight: 400,
+                  fontSize: "18px",
+                  lineHeight: "100%",
+                  textAlign: "center",
+                  color: "#000000",
+                }}
+              >
+                {cat.name}
+              </div>
+            </div>
+          ))}
         </div>
       </Container>
     </section>
