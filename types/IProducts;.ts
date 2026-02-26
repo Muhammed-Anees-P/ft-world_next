@@ -5,7 +5,7 @@ export interface IProduct {
   name: string;
   slug: string;
   description?: string;
-  dicountPrice: number;
+  discountPrice: number;
   originalPrice: number;
   stock: number;
   category: ICategory;
@@ -13,4 +13,5 @@ export interface IProduct {
   isActive: boolean;
   isSuggestedForHome?: boolean;
   isOffer?: boolean;
+  offerDescription?: string;
 }
