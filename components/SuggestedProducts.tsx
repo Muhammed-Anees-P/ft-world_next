@@ -137,7 +137,7 @@ export default function SuggestedProducts() {
               <p
                 style={{
                   marginTop: "12px",
-                  fontSize: "14px",
+                  fontSize: "22px",
                   fontWeight: 400,
                   color: "#000",
                 }}
@@ -149,7 +149,7 @@ export default function SuggestedProducts() {
               <div className="flex items-center gap-2 mt-1">
                 <span
                   style={{
-                    fontSize: "16px",
+                    fontSize: "20px",
                     fontWeight: 600,
                     color: "#000",
                   }}
@@ -160,7 +160,7 @@ export default function SuggestedProducts() {
                 {/* {product.originalPrice && ( */}
                 <span
                   style={{
-                    fontSize: "14px",
+                    fontSize: "19px",
                     textDecoration: "line-through",
                     color: "#777",
                   }}
