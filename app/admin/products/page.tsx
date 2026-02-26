@@ -14,24 +14,8 @@ import {
 } from "@/services/productServices";
 import { uploadImage } from "@/services/bannerService";
 import { useProductQuery } from "@/hooks/useProductQuery";
-
-interface Category {
-  _id: string;
-  name: string;
-}
-
-interface Product {
-  _id: string;
-  name: string;
-  slug: string;
-  description?: string;
-  price: number;
-  stock: number;
-  category: Category;
-  images: string[];
-  isActive: boolean;
-  isSuggestedForHome?: boolean;
-}
+import { IProduct } from "@/types/IProducts;";
+import { ICategory } from "@/types/ICategory";
 
 export default function ProductsPage() {
   const queryClient = useQueryClient();
@@ -56,6 +40,7 @@ export default function ProductsPage() {
     stock: "",
     isActive: true,
     isSuggestedForHome: false,
+    isOffer: false,
   };
 
   const [form, setForm] = useState(initialForm);
@@ -90,7 +75,7 @@ export default function ProductsPage() {
 
   // ================= MODAL =================
 
-  const openModal = (product?: Product) => {
+  const openModal = (product?: IProduct) => {
     if (product) {
       setEditingId(product._id);
       setForm({
@@ -103,6 +88,7 @@ export default function ProductsPage() {
         stock: product.stock.toString(),
         isActive: product.isActive ?? true,
         isSuggestedForHome: product.isSuggestedForHome ?? false,
+        isOffer: product.isOffer ?? false,
       });
     } else {
       setEditingId(null);
@@ -166,6 +152,7 @@ export default function ProductsPage() {
       stock: Number(form.stock),
       isActive: form.isActive,
       isSuggestedForHome: form.isSuggestedForHome,
+      isOffer: form.isOffer,
     };
 
     if (editingId) {
@@ -301,7 +288,7 @@ export default function ProductsPage() {
                 className="p-3 border rounded-xl"
               >
                 <option value="">Select Category</option>
-                {categories.map((cat: Category) => (
+                {categories.map((cat: ICategory) => (
                   <option key={cat._id} value={cat._id}>
                     {cat.name}
                   </option>
@@ -342,6 +329,17 @@ export default function ProductsPage() {
                   }
                 />
                 <span>Display on Home Page (Suggested section)</span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={form.isOffer}
+                  onChange={(e) =>
+                    setForm({ ...form, isOffer: e.target.checked })
+                  }
+                />
+                <span>Offer Section(Home Page)</span>
               </div>
 
               <input type="file" multiple onChange={handleFileUpload} />
