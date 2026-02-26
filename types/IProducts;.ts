@@ -11,4 +11,5 @@ export interface IProduct {
   images: string[];
   isActive: boolean;
   isSuggestedForHome?: boolean;
+  isOffer?:boolean
 }
