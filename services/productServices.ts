@@ -19,3 +19,8 @@ export const deleteProduct = async (id: string) => {
   const res = await AXIOS.delete(`/products/${id}`);
   return res.data;
 };
+
+export const listSuggestedProducts = async () => {
+  const res = await AXIOS.get("/products/suggested");
+  return res.data.data;
+};
