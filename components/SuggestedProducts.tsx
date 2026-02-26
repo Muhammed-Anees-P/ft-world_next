@@ -116,7 +116,7 @@ export default function SuggestedProducts() {
                     bottom: "12px",
                     left: "12px",
                     background: "#FFFFFF",
-                    borderRadius: "20px",
+                    borderRadius: "6px",
                     padding: "4px 8px",
                     display: "flex",
                     alignItems: "center",
