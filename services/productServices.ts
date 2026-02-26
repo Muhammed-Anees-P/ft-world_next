@@ -24,3 +24,8 @@ export const listSuggestedProducts = async () => {
   const res = await AXIOS.get("/products/suggested");
   return res.data.data;
 };
+
+export const listOfferProducts = async () => {
+  const res = await AXIOS.get("/products/offers");
+  return res.data.data;
+};
