@@ -98,7 +98,6 @@ export default function ProductsPage() {
       setEditingId(null);
       setForm(initialForm);
     }
-
     setIsOpen(true);
   };
 
@@ -112,12 +111,10 @@ export default function ProductsPage() {
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-
     const files = Array.from(e.target.files);
 
     try {
       setUploading(true);
-
       const uploaded: string[] = [];
 
       for (const file of files) {
@@ -138,7 +135,27 @@ export default function ProductsPage() {
     }
   };
 
-  // ================= SUBMIT =================
+  const handleRemoveImage = (index: number) => {
+    const updatedImages = form.images.filter((_, i) => i !== index);
+
+    setForm((prev) => ({
+      ...prev,
+      images: updatedImages,
+    }));
+
+    if (editingId) {
+      updateMutation.mutate({
+        id: editingId,
+        data: {
+          ...form,
+          images: updatedImages,
+          discountPrice: Number(form.discountPrice),
+          originalPrice: Number(form.originalPrice),
+          stock: Number(form.stock),
+        },
+      });
+    }
+  };
 
   const handleSubmit = () => {
     if (
@@ -190,7 +207,6 @@ export default function ProductsPage() {
     <div className="space-y-8">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold text-[#542452]">Products</h2>
-
         <button
           onClick={() => openModal()}
           className="bg-[#542452] text-white px-5 py-3 rounded-xl flex items-center gap-2"
@@ -200,18 +216,19 @@ export default function ProductsPage() {
       </div>
 
       <div className="bg-white rounded-2xl shadow border overflow-hidden">
-        <table className="w-full">
+        <table className="w-full table-fixed">
           <thead className="bg-gray-50 text-sm">
-            <tr>
-              <th className="p-4">Image</th>
+            <tr className="text-left">
+              <th className="p-4 w-[100px]">Image</th>
               <th className="p-4">Name</th>
               <th className="p-4">Category</th>
-              <th className="p-4">Price</th>
-              <th className="p-4">Stock</th>
-              <th className="p-4">Status</th>
-              <th className="p-4 text-right">Actions</th>
+              <th className="p-4 w-[120px]">Price</th>
+              <th className="p-4 w-[100px]">Stock</th>
+              <th className="p-4 w-[120px]">Status</th>
+              <th className="p-4 w-[120px] text-right">Actions</th>
             </tr>
           </thead>
+
           <tbody>
             {isLoading ? (
               <tr>
@@ -221,17 +238,19 @@ export default function ProductsPage() {
               </tr>
             ) : (
               products.map((p) => (
-                <tr key={p._id} className="border-t">
+                <tr key={p._id} className="border-t align-middle">
                   <td className="p-4">
                     <img
                       src={p.images?.[0]}
                       className="w-14 h-14 rounded-lg object-cover"
                     />
                   </td>
-                  <td className="p-4">{p.name}</td>
+
+                  <td className="p-4 truncate">{p.name}</td>
                   <td className="p-4">{p.category?.name}</td>
-                  <td className="p-4">${p.discountPrice}</td>
+                  <td className="p-4">₹{p.discountPrice}</td>
                   <td className="p-4">{p.stock}</td>
+
                   <td className="p-4">
                     <span
                       className={`px-3 py-1 text-xs rounded-full ${
@@ -243,6 +262,7 @@ export default function ProductsPage() {
                       {p.isActive ? "Active" : "Inactive"}
                     </span>
                   </td>
+
                   <td className="p-4 text-right space-x-3">
                     <button
                       onClick={() => openModal(p)}
@@ -356,7 +376,10 @@ export default function ProductsPage() {
                   type="checkbox"
                   checked={form.isSuggestedForHome}
                   onChange={(e) =>
-                    setForm({ ...form, isSuggestedForHome: e.target.checked })
+                    setForm({
+                      ...form,
+                      isSuggestedForHome: e.target.checked,
+                    })
                   }
                 />
                 <span>Display on Home Page (Suggested section)</span>
@@ -371,30 +394,41 @@ export default function ProductsPage() {
                   }
                 />
                 <span>Offer Section(Home Page)</span>
-
-                {form.isOffer && (
-                  <div className="col-span-2">
-                    <input
-                      placeholder="Offer Description (Ex: Min 10% Off)"
-                      value={form.offerDescription}
-                      onChange={(e) =>
-                        setForm({ ...form, offerDescription: e.target.value })
-                      }
-                      className="p-3 border rounded-xl w-full"
-                    />
-                  </div>
-                )}
               </div>
+
+              {form.isOffer && (
+                <div className="md:col-span-2">
+                  <input
+                    placeholder="Offer Description (Ex: Min 10% Off)"
+                    value={form.offerDescription}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        offerDescription: e.target.value,
+                      })
+                    }
+                    className="p-3 border rounded-xl w-full"
+                  />
+                </div>
+              )}
 
               <input type="file" multiple onChange={handleFileUpload} />
 
-              <div className="col-span-2 flex gap-3 flex-wrap">
+              <div className="md:col-span-2 flex gap-3 flex-wrap">
                 {form.images.map((img, i) => (
-                  <img
-                    key={i}
-                    src={img}
-                    className="w-20 h-20 rounded-lg object-cover"
-                  />
+                  <div key={i} className="relative">
+                    <img
+                      src={img}
+                      className="w-20 h-20 rounded-lg object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(i)}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>
