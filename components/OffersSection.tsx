@@ -92,9 +92,9 @@ export default function OffersSection() {
                     width: "277px",
                     height: "49px",
                     paddingTop: "7px",
-                    paddingRight: "63px",
+                    paddingRight: "20px",
                     paddingBottom: "7px",
-                    paddingLeft: "63px",
+                    paddingLeft: "20px",
                     borderBottomRightRadius: "20px",
                     borderBottomLeftRadius: "20px",
                     background: "#A92C2C",
@@ -104,10 +104,12 @@ export default function OffersSection() {
                     color: "#FFFFFF",
                     fontWeight: 500,
                     fontSize: "22px",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
                   }}
                 >
-                  {"Min 10% Off"}
-                  {/* //need to dynamic */}
+                  {product.offerDescription}
                 </div>
               </div>
 
