@@ -3,10 +3,8 @@ import Footer from "@/components/Footer";
 import HeroSlider from "@/components/HeroSlider";
 import Navbar from "@/components/Navbar";
 import OffersSection from "@/components/OffersSection";
-import OurProductsSection from "@/components/OurProductsSection";
 import SuggestedProducts from "@/components/SuggestedProducts";
 import ValueForMoneySection from "@/components/ValueForMoneySection";
-import React from "react";
 
 const HomePage = () => {
   return (
@@ -16,8 +14,6 @@ const HomePage = () => {
       <HeroSlider />
       <SuggestedProducts />
       <OffersSection />
-
-      <OurProductsSection />
       <ValueForMoneySection />
       <Footer />
     </main>
