@@ -30,6 +30,7 @@ interface Product {
   category: Category;
   images: string[];
   isActive: boolean;
+  isSuggestedForHome?: boolean;
 }
 
 export default function ProductsPage() {
@@ -54,6 +55,7 @@ export default function ProductsPage() {
     price: "",
     stock: "",
     isActive: true,
+    isSuggestedForHome: false,
   };
 
   const [form, setForm] = useState(initialForm);
@@ -100,6 +102,7 @@ export default function ProductsPage() {
         price: product.price.toString(),
         stock: product.stock.toString(),
         isActive: product.isActive ?? true,
+        isSuggestedForHome: product.isSuggestedForHome ?? false,
       });
     } else {
       setEditingId(null);
@@ -162,6 +165,7 @@ export default function ProductsPage() {
       price: Number(form.price),
       stock: Number(form.stock),
       isActive: form.isActive,
+      isSuggestedForHome: form.isSuggestedForHome,
     };
 
     if (editingId) {
@@ -327,6 +331,17 @@ export default function ProductsPage() {
                   }
                 />
                 <span>Active</span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={form.isSuggestedForHome}
+                  onChange={(e) =>
+                    setForm({ ...form, isSuggestedForHome: e.target.checked })
+                  }
+                />
+                <span>Display on Home Page (Suggested section)</span>
               </div>
 
               <input type="file" multiple onChange={handleFileUpload} />
