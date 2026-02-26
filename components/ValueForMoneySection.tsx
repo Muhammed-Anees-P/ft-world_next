@@ -1,9 +1,45 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Container from "@/components/Container";
+import { useQuery } from "@tanstack/react-query";
+import { useValueForMoneyProductListQuery } from "@/hooks/useProductQuery";
+
+interface IProduct {
+  _id: string;
+  name: string;
+  description?: string;
+  price: number;
+  originalPrice?: number;
+  images: string[];
+  discountPercentage: number;
+  discountPrice: number;
+}
 
 export default function ValueForMoneySection() {
+  const { data = [], isLoading } = useQuery(useValueForMoneyProductListQuery());
+
+  const products: IProduct[] = data;
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [expanded, setExpanded] = useState(false);
+
+  // Auto switch every 5 seconds
+  useEffect(() => {
+    if (!products.length) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % products.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [products.length]);
+
+  if (isLoading || products.length === 0) return null;
+
+  const product = products[currentIndex];
+
   return (
     <section className="w-full py-16 bg-white">
       <Container>
@@ -28,8 +64,8 @@ export default function ValueForMoneySection() {
             <div className="flex flex-col sm:flex-row gap-[23px]">
               <div className="relative w-full sm:w-[70%] h-[200px] sm:h-[201px] rounded-[20px] overflow-hidden bg-[#BE6161]">
                 <Image
-                  src="/sample1.jpg"
-                  alt="img1"
+                  src={product.images?.[0] || "/placeholder.jpg"}
+                  alt={product.name}
                   fill
                   className="object-cover"
                 />
@@ -37,8 +73,12 @@ export default function ValueForMoneySection() {
 
               <div className="relative w-full sm:w-[30%] h-[200px] sm:h-[201px] rounded-[20px] overflow-hidden bg-[#BE6161]">
                 <Image
-                  src="/sample2.jpg"
-                  alt="img2"
+                  src={
+                    product.images?.[1] ||
+                    product.images?.[0] ||
+                    "/placeholder.jpg"
+                  }
+                  alt={product.name}
                   fill
                   className="object-cover"
                 />
@@ -49,8 +89,12 @@ export default function ValueForMoneySection() {
             <div className="flex flex-col sm:flex-row gap-[23px]">
               <div className="relative w-full sm:w-[25%] h-[200px] rounded-[20px] overflow-hidden bg-[#BE6161]">
                 <Image
-                  src="/sample3.jpg"
-                  alt="img3"
+                  src={
+                    product.images?.[2] ||
+                    product.images?.[0] ||
+                    "/placeholder.jpg"
+                  }
+                  alt={product.name}
                   fill
                   className="object-cover"
                 />
@@ -58,8 +102,12 @@ export default function ValueForMoneySection() {
 
               <div className="relative w-full sm:w-[25%] h-[200px] rounded-[20px] overflow-hidden bg-[#BE6161]">
                 <Image
-                  src="/sample4.jpg"
-                  alt="img4"
+                  src={
+                    product.images?.[3] ||
+                    product.images?.[0] ||
+                    "/placeholder.jpg"
+                  }
+                  alt={product.name}
                   fill
                   className="object-cover"
                 />
@@ -67,8 +115,12 @@ export default function ValueForMoneySection() {
 
               <div className="relative w-full sm:w-[50%] h-[200px] rounded-[20px] overflow-hidden bg-[#BE6161]">
                 <Image
-                  src="/sample5.jpg"
-                  alt="img5"
+                  src={
+                    product.images?.[4] ||
+                    product.images?.[0] ||
+                    "/placeholder.jpg"
+                  }
+                  alt={product.name}
                   fill
                   className="object-cover"
                 />
@@ -87,7 +139,7 @@ export default function ValueForMoneySection() {
                 lineHeight: "100%",
               }}
             >
-              BlinkOutdoor HD camera
+              {product.name}
             </h3>
 
             {/* DESCRIPTION */}
@@ -97,19 +149,48 @@ export default function ValueForMoneySection() {
                 fontFamily: "Poppins, sans-serif",
               }}
             >
-              The Develop Ineo+ 251i is a cost-effective A3 colour multifunction
-              printer ideal for small to medium offices. It delivers 25 ppm in
-              colour and black & white, supports copy, print and scan with
-              advanced mobile connectivity.
+              {product.description ? (
+                <>
+                  {expanded
+                    ? product.description
+                    : product.description.slice(0, 400)}
+
+                  {product.description.length > 400 && (
+                    <span
+                      onClick={() => setExpanded(!expanded)}
+                      style={{
+                        color: "#542452",
+                        fontWeight: 500,
+                        cursor: "pointer",
+                        marginLeft: "6px",
+                      }}
+                    >
+                      {expanded ? "Read Less" : "... Read More"}
+                    </span>
+                  )}
+                </>
+              ) : (
+                "No description available."
+              )}
             </p>
 
             {/* PRICE */}
             <div className="flex items-center gap-4">
-              <span className="text-green-600 text-lg font-medium">30% ↓</span>
+              {product.discountPercentage > 0 && (
+                <span className="text-green-600 text-lg font-medium">
+                  {product.discountPercentage}% ↓
+                </span>
+              )}
 
-              <span className="text-gray-400 line-through">₹35,975</span>
+              {product.originalPrice && (
+                <span className="text-gray-400 line-through">
+                  ₹{product.originalPrice}
+                </span>
+              )}
 
-              <span className="text-2xl font-semibold">₹34,900</span>
+              <span className="text-2xl font-semibold">
+                ₹{product.discountPrice}
+              </span>
             </div>
 
             {/* BUY NOW */}
