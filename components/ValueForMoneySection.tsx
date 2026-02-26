@@ -56,7 +56,7 @@ export default function ValueForMoneySection() {
           <div className="w-full lg:w-[60%] flex flex-col gap-[23px]">
             {/* TOP ROW */}
             <div className="flex flex-col sm:flex-row gap-[23px]">
-              <div className="relative w-full sm:w-[70%] h-[200px] sm:h-[201px] rounded-[20px] overflow-hidden bg-[#BE6161]">
+              <div className="relative w-full sm:w-[70%] h-[200px] sm:h-[201px] rounded-[20px] overflow-hidden ">
                 <Image
                   src={product.images?.[0] || "/placeholder.jpg"}
                   alt={product.name}
@@ -65,7 +65,7 @@ export default function ValueForMoneySection() {
                 />
               </div>
 
-              <div className="relative w-full sm:w-[30%] h-[200px] sm:h-[201px] rounded-[20px] overflow-hidden bg-[#BE6161]">
+              <div className="relative w-full sm:w-[30%] h-[200px] sm:h-[201px] rounded-[20px] overflow-hidden ">
                 <Image
                   src={
                     product.images?.[1] ||
@@ -81,7 +81,7 @@ export default function ValueForMoneySection() {
 
             {/* BOTTOM ROW */}
             <div className="flex flex-col sm:flex-row gap-[23px]">
-              <div className="relative w-full sm:w-[25%] h-[200px] rounded-[20px] overflow-hidden bg-[#BE6161]">
+              <div className="relative w-full sm:w-[25%] h-[200px] rounded-[20px] overflow-hidden ">
                 <Image
                   src={
                     product.images?.[2] ||
@@ -94,7 +94,7 @@ export default function ValueForMoneySection() {
                 />
               </div>
 
-              <div className="relative w-full sm:w-[25%] h-[200px] rounded-[20px] overflow-hidden bg-[#BE6161]">
+              <div className="relative w-full sm:w-[25%] h-[200px] rounded-[20px] overflow-hidden ">
                 <Image
                   src={
                     product.images?.[3] ||
@@ -107,7 +107,7 @@ export default function ValueForMoneySection() {
                 />
               </div>
 
-              <div className="relative w-full sm:w-[50%] h-[200px] rounded-[20px] overflow-hidden bg-[#BE6161]">
+              <div className="relative w-full sm:w-[50%] h-[200px] rounded-[20px] overflow-hidden ">
                 <Image
                   src={
                     product.images?.[4] ||
