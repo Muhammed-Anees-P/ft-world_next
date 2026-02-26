@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Container from "@/components/Container";
 import { useQuery } from "@tanstack/react-query";
@@ -25,20 +25,14 @@ export default function ValueForMoneySection() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [expanded, setExpanded] = useState(false);
 
-  // Auto switch every 5 seconds
-  useEffect(() => {
-    if (!products.length) return;
-
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % products.length);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [products.length]);
-
   if (isLoading || products.length === 0) return null;
 
   const product = products[currentIndex];
+
+  const handleSelectProduct = (index: number) => {
+    setCurrentIndex(index);
+    setExpanded(false);
+  };
 
   return (
     <section className="w-full py-16 bg-white">
@@ -145,9 +139,7 @@ export default function ValueForMoneySection() {
             {/* DESCRIPTION */}
             <p
               className="text-gray-600 text-sm leading-relaxed"
-              style={{
-                fontFamily: "Poppins, sans-serif",
-              }}
+              style={{ fontFamily: "Poppins, sans-serif" }}
             >
               {product.description ? (
                 <>
@@ -174,7 +166,6 @@ export default function ValueForMoneySection() {
               )}
             </p>
 
-            {/* PRICE */}
             <div className="flex items-center gap-4">
               {product.discountPercentage > 0 && (
                 <span className="text-green-600 text-lg font-medium">
@@ -193,15 +184,25 @@ export default function ValueForMoneySection() {
               </span>
             </div>
 
-            {/* BUY NOW */}
             <button
               className="w-[277px] h-[48px] rounded-[10px] text-white"
-              style={{
-                background: "#542452",
-              }}
+              style={{ background: "#542452" }}
             >
               Buy Now
             </button>
+
+            {/* PRODUCT SELECTOR DOTS */}
+            <div className="flex gap-3 mt-4">
+              {products.map((_, index) => (
+                <div
+                  key={index}
+                  onClick={() => handleSelectProduct(index)}
+                  className={`w-3 h-3 rounded-full cursor-pointer transition ${
+                    currentIndex === index ? "bg-[#542452]" : "bg-gray-300"
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </Container>
