@@ -10,11 +10,11 @@ const HomePage = () => {
   return (
     <main>
       <Navbar />
-      <HeroSlider />
       <CategoriesSection />
+      <HeroSlider />
       <OurProductsSection />
       <ValueForMoneySection />
-      <Footer/>
+      <Footer />
     </main>
   );
 };
