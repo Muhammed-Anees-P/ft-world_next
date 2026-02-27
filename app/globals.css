@@ -34,3 +34,17 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+
+@keyframes partnersScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.partners-scroll {
+  animation: partnersScroll 25s linear infinite;
+}
