@@ -9,6 +9,7 @@ import {
   Handshake,
   Headset,
 } from "lucide-react";
+import PartnersSection from "./PartnersSection";
 
 export default function AboutSection() {
   return (
@@ -65,16 +66,69 @@ export default function AboutSection() {
       </section>
 
       {/* ===== WHO WE ARE ===== */}
-      <section className="pb-16 md:pb-24 bg-white">
+      <section className="pb-20 bg-[white]">
         <Container>
-          <div className="bg-[#F2E3F2] rounded-2xl md:rounded-3xl px-6 sm:px-10 md:px-14 py-8 md:py-12 grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
-            {/* TEXT */}
-            <div>
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-4 md:mb-6">
+          {/* TOP ROW (60% / 40%) */}
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+            {/* FIRST DIV — 60% */}
+            <div className="lg:col-span-3 bg-[#FAEDFA] rounded-[20px] p-8 flex flex-col justify-between">
+              <div>
+                <h3 className="text-2xl md:text-3xl font-semibold mb-4">
+                  Who We Are
+                </h3>
+
+                <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-6">
+                  At FT World, we are a team of passionate professionals focused
+                  on innovation, service excellence, and long-term partnerships.
+                  We believe technology should simplify operations, enhance
+                  security, and improve everyday life.
+                </p>
+              </div>
+
+              <div className="relative w-full h-[200px] rounded-[20px] overflow-hidden">
+                <Image
+                  src="/about-team2.png"
+                  alt="Team discussion"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </div>
+
+            {/* SECOND DIV — 40% */}
+            <div className="lg:col-span-2 bg-[#FAEDFA] rounded-[20px] p-8 flex flex-col justify-between">
+              <div>
+                <h3 className="text-2xl md:text-3xl font-semibold mb-4">
+                  Who We Are
+                </h3>
+
+                <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-6">
+                  At FT World, we are a team of passionate professionals focused
+                  on innovation, service excellence, and long-term partnerships.
+                  We believe technology should simplify operations and improve
+                  everyday life.
+                </p>
+              </div>
+
+              <div className="relative w-full h-[200px] rounded-[20px] overflow-hidden">
+                <Image
+                  src="/about-team2.png"
+                  alt="Team discussion"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* BOTTOM FULL WIDTH CARD */}
+          <div className="bg-[#FAEDFA] rounded-[20px] px-12 py-8 flex flex-col lg:flex-row items-center gap-10">
+            <div className="flex-1">
+              <h3 className="text-2xl md:text-3xl font-semibold mb-4">
                 Who We Are
               </h3>
 
-              <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
+              <p className="text-gray-600 text-sm md:text-base leading-relaxed">
                 At FT World, we are a team of passionate professionals focused
                 on innovation, service excellence, and long-term partnerships.
                 We believe technology should simplify operations, enhance
@@ -82,8 +136,7 @@ export default function AboutSection() {
               </p>
             </div>
 
-            {/* IMAGE */}
-            <div className="relative w-full h-50 sm:h-57.5 md:h-65 rounded-2xl overflow-hidden shadow-sm">
+            <div className="relative w-full lg:w-[600px] h-[220px] rounded-[20px] overflow-hidden">
               <Image
                 src="/about-team2.png"
                 alt="Team discussion"
@@ -94,52 +147,8 @@ export default function AboutSection() {
           </div>
         </Container>
       </section>
-
-      {/* ===== OUR APPROACH ===== */}
-      <section className="pb-16 md:pb-24 bg-white">
-        <Container>
-          <h3 className="text-xl sm:text-2xl font-semibold mb-8 md:mb-12">
-            Our approach is built on
-          </h3>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 md:gap-6">
-            {[
-              {
-                icon: <ShieldCheck size={26} />,
-                text: "Quality-first product selection",
-              },
-              {
-                icon: <RefreshCcw size={26} />,
-                text: "Continuous innovation",
-              },
-              {
-                icon: <Users size={26} />,
-                text: "Customer-centric service",
-              },
-              {
-                icon: <Handshake size={26} />,
-                text: "Ethical and transparent business",
-              },
-              {
-                icon: <Headset size={26} />,
-                text: "Reliable after-sales support",
-              },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-xl p-5 md:p-6 text-center shadow-sm hover:shadow-md transition"
-              >
-                <div className="flex justify-center text-[#542452] mb-3 md:mb-4">
-                  {item.icon}
-                </div>
-                <p className="text-sm md:text-base text-gray-700">
-                  {item.text}
-                </p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
+      {/* ===== OUR PARTNERS ===== */}
+      <PartnersSection />
     </main>
   );
 }
