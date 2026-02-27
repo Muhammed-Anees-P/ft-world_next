@@ -4,6 +4,7 @@ import { useProductStore } from "@/store/productStore";
 import { useEffect } from "react";
 import {
   listOfferProducts,
+  listProductsForUser,
   listSuggestedProducts,
   listValeuForMoneyProducts,
 } from "@/services/productServices";
@@ -44,4 +45,11 @@ export const useValueForMoneyProductListQuery = () =>
   queryOptions({
     queryKey: ["value-for-money-products"],
     queryFn: listValeuForMoneyProducts,
+  });
+
+
+  export const useListProductsForUser = () =>
+  queryOptions({
+    queryKey: ["users-products"],
+    queryFn: listProductsForUser,
   });
