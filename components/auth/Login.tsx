@@ -31,7 +31,7 @@ export default function Login() {
             </p>
 
             <Link
-              href="/signup"
+              href="/register"
               className="mt-4 block w-full h-[48px] bg-[#542452] text-white rounded-[10px] text-sm font-medium flex items-center justify-center hover:opacity-90 transition"
             >
               Sign Up
