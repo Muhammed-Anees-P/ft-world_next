@@ -107,25 +107,33 @@ export default function Footer() {
           </div>
 
           {/* Newsletter */}
-          <div className="space-y-4">
-            <h3 className="font-semibold">STAY CONNECTED</h3>
+          <div className="">
+            <div className="space-y-4">
+              <h3 className="font-semibold">STAY CONNECTED</h3>
 
-            <p className="text-sm text-gray-800">
-              Subscribe to our newsletter for exclusive deals and updates.
-            </p>
+              <p className="text-sm text-gray-800">
+                Subscribe to our newsletter for exclusive deals and updates.
+              </p>
 
-            <div className="flex items-center bg-white rounded-lg overflow-hidden shadow-sm">
-              <input
-                type="email"
-                placeholder="Your Email Address"
-                className="flex-1 px-4 py-2 text-sm outline-none"
-              />
-              <button className="bg-[#542452] text-white px-4 py-2 hover:opacity-90 transition">
-                <Send size={16} />
-              </button>
+              <div className="flex gap-4">
+                <div className="flex items-center bg-[#D9D9D9] rounded-lg overflow-hidden shadow-sm">
+                  <input
+                    type="email"
+                    placeholder="Your Email Address"
+                    className="flex-1 px-4 py-2 text-sm outline-none"
+                    style={{ border: "1px solid #542452", borderRadius: "8px" }}
+                  />
+                </div>
+                <button
+                  className="bg-[#542452] text-white px-4 py-2 hover:opacity-90 transition"
+                  style={{ borderRadius: "10px" }}
+                >
+                  <Send size={16} />
+                </button>
+              </div>
             </div>
 
-            <div className="flex items-center gap-2 text-sm text-gray-800">
+            <div className="flex items-center gap-2 mt-4 text-sm text-gray-800">
               <Mail size={16} />
               support@ftworld.com
             </div>
