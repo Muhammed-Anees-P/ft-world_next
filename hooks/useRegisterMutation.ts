@@ -9,9 +9,9 @@ export const useRegisterMutation = () => {
     mutationFn: registerUser,
 
     onSuccess: (data) => {
-      const { accessToken } = data;
+      const { access_token } = data;
 
-      setAuth(accessToken);
+      setAuth(access_token);
     },
   });
 };
