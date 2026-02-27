@@ -13,49 +13,8 @@ import {
 export default function AboutSection() {
   return (
     <main className="w-full bg-[#FAEDFA]">
-      {/* ===== HERO SECTION ===== */}
-      <section className="w-full bg-[#FAEDFA] overflow-hidden">
-        <div className="relative w-full">
-          {/* MOBILE IMAGE */}
-          <div className="relative w-full h-55 md:hidden">
-            <Image
-              src="/about-building.png"
-              alt="FT World Building"
-              fill
-              priority
-              className="object-cover"
-            />
-          </div>
-
-          <div className="flex flex-col md:flex-row items-center min-h-65 md:min-h-90">
-            {/* LEFT TEXT */}
-            <div className="w-full md:w-1/2 px-6 sm:px-10 md:px-20 py-10 md:py-0">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-black mb-4 md:mb-6">
-                About Us
-              </h1>
-
-              <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed max-w-xl">
-                Innovate advanced technology solutions that drive progress and
-                efficiency. Our mission is to empower the future through smart,
-                reliable, and forward-thinking innovation.
-              </p>
-            </div>
-
-            {/* DESKTOP IMAGE */}
-            <div className="hidden md:block relative w-1/2 h-90">
-              <Image
-                src="/about-building.png"
-                alt="FT World Building"
-                fill
-                className="object-cover object-right"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ===== ABOUT FTWORLD ===== */}
-      <section className="py-16 md:py-24 bg-white">
+      <section className="py-16 md:py-20 bg-white">
         <Container>
           <div className="text-center mb-12 md:mb-20">
             <h2 className="font-semibold text-[32px] sm:text-[42px] md:text-[56px] leading-tight">
@@ -94,6 +53,12 @@ export default function AboutSection() {
                 adapting to market demands and staying ahead with smart,
                 future-ready solutions.
               </p>
+              <button
+                className="bg-[#542452] text-white px-4 py-2 hover:opacity-90 transition rounded-lg w-[200px]"
+                style={{ fontWeight: 500 }}
+              >
+                Free Consultation
+              </button>
             </div>
           </div>
         </Container>
