@@ -34,3 +34,8 @@ export const listValeuForMoneyProducts = async () => {
   const res = await AXIOS.get("/products/value-for-money");
   return res.data.data;
 };
+
+export const listProductsForUser = async () => {
+  const res = await AXIOS.get("/products/users");
+  return res.data;
+};
