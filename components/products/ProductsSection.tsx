@@ -4,59 +4,66 @@ import Image from "next/image";
 import Link from "next/link";
 import Container from "@/components/Container";
 import FeaturProducts from "./FeaturedProducts";
+import CategoriesSection from "../CategoriesSection";
 
 const products = [
   {
     slug: "develop-ineo-224e",
-    name: "Develop Ineo 224e",
-    description: "A4 colour multifunction printer",
-    price: "24,900",
+    name: "Develop ineo 224e...",
+    price: "54,900",
+    oldPrice: "58,900",
     rating: 4.5,
+    reviews: 123,
     productImage: "/printer1.png",
     bgImage: "/bg-printer1.jpg",
   },
   {
     slug: "posiflow-psf-ii-1",
     name: "POSIFLOW PSF-II",
-    description: "All-in-one touchscreen POS",
-    price: "18,500",
-    rating: 4.3,
-    productImage: "/pos.png",
-    bgImage: "/bg-printer1.jpg",
-  },
-  {
-    slug: "posiflow-psf-ii-2",
-    name: "POSIFLOW PSF-II",
-    description: "All-in-one touchscreen POS",
-    price: "18,500",
-    rating: 4.3,
-    productImage: "/pos.png",
-    bgImage: "/bg-printer1.jpg",
-  },
-  {
-    slug: "posiflow-psf-ii-3",
-    name: "POSIFLOW PSF-II",
-    description: "All-in-one touchscreen POS",
-    price: "18,500",
-    rating: 4.3,
+    price: "54,900",
+    oldPrice: "58,900",
+    rating: 4.5,
+    reviews: 123,
     productImage: "/pos.png",
     bgImage: "/bg-printer1.jpg",
   },
   {
     slug: "develop-ineo-224e-2",
-    name: "Develop Ineo 224e",
-    description: "A4 colour multifunction printer",
-    price: "24,900",
+    name: "Develop ineo 224e...",
+    price: "54,900",
+    oldPrice: "58,900",
     rating: 4.5,
+    reviews: 123,
     productImage: "/printer1.png",
     bgImage: "/bg-printer1.jpg",
   },
   {
-    slug: "posiflow-psf-ii-4",
+    slug: "posiflow-psf-ii-2",
     name: "POSIFLOW PSF-II",
-    description: "All-in-one touchscreen POS",
-    price: "18,500",
-    rating: 4.3,
+    price: "54,900",
+    oldPrice: "58,900",
+    rating: 4.5,
+    reviews: 123,
+    productImage: "/pos.png",
+    bgImage: "/bg-printer1.jpg",
+  },
+  {
+    slug: "develop-ineo-224e-3",
+    name: "Develop ineo 224e...",
+    price: "54,900",
+    oldPrice: "58,900",
+    rating: 4.5,
+    reviews: 123,
+    productImage: "/printer1.png",
+    bgImage: "/bg-printer1.jpg",
+  },
+  {
+    slug: "posiflow-psf-ii-3",
+    name: "POSIFLOW PSF-II",
+    price: "54,900",
+    oldPrice: "58,900",
+    rating: 4.5,
+    reviews: 123,
     productImage: "/pos.png",
     bgImage: "/bg-printer1.jpg",
   },
@@ -66,36 +73,42 @@ export default function ProductsSection() {
   return (
     <>
       <FeaturProducts />
-      <section className="w-full py-16 md:py-24 bg-[#FFFFFF]">
+
+      <section className="w-full py-16 bg-[#FFFFFF]">
+        {/* Our Products Title */}
         <Container>
-          {/* Title */}
-          <h2 className="text-2xl md:text-3xl font-semibold mb-10 md:mb-14">
+          <h2 className="text-2xl md:text-3xl font-semibold mb-4">
             Our Products
           </h2>
+        </Container>
 
-          {/* Products Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
+        {/* Categories (Already Has Container Inside) */}
+        <CategoriesSection />
+
+        {/* Products Section */}
+        <Container>
+          <h3 className="text-xl font-semibold ">Products</h3>
+
+          <div className="flex flex-wrap gap-6">
             {products.map((product, index) => (
               <Link
                 key={index}
                 href={`/product/${product.slug}`}
                 className="group"
               >
-                <div className="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition cursor-pointer">
-                  {/* Image Area */}
-                  <div className="relative w-full h-48 mb-4 flex items-center justify-center">
-                    {/* Background Image */}
+                <div className="w-[276px] h-[409px] bg-white rounded-[15px] px-[20px] py-[15px] flex flex-col gap-[12px] border border-gray-100">
+                  {/* Image */}
+                  <div className="relative w-full h-[170px] flex items-center justify-center">
                     <div className="absolute inset-0">
                       <Image
                         src={product.bgImage}
-                        alt="Background shade"
+                        alt="Background"
                         fill
-                        className="object-cover opacity-30 rounded-xl"
+                        className="object-cover opacity-10 rounded-[10px]"
                       />
                     </div>
 
-                    {/* Product Image */}
-                    <div className="relative w-36 h-36 z-10 transition-transform duration-300 group-hover:scale-105">
+                    <div className="relative w-[140px] h-[140px] z-10">
                       <Image
                         src={product.productImage}
                         alt={product.name}
@@ -105,27 +118,31 @@ export default function ProductsSection() {
                     </div>
                   </div>
 
-                  {/* Product Info */}
-                  <h3 className="text-sm md:text-base font-medium truncate">
+                  <h4 className="text-sm font-medium truncate">
                     {product.name}
-                  </h3>
+                  </h4>
 
-                  <p className="text-xs text-gray-500 mt-1">
-                    {product.description}
-                  </p>
-
-                  {/* Rating */}
-                  <div className="flex items-center mt-2 text-yellow-400 text-sm">
-                    ⭐ {product.rating}
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="font-semibold text-black">
+                      ₹{product.price}
+                    </span>
+                    <span className="text-gray-400 line-through">
+                      ₹{product.oldPrice}
+                    </span>
                   </div>
 
-                  {/* Price */}
-                  <p className="text-sm font-semibold mt-2">₹{product.price}</p>
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="text-yellow-400 text-xs">★★★★☆</div>
+                    <span className="text-gray-500 text-xs">
+                      ({product.reviews} reviews)
+                    </span>
+                  </div>
 
-                  {/* Button */}
-                  <button className="w-full mt-4 bg-linear-to-r from-[#7A2E7A] to-[#C53BD2] text-white py-2 rounded-full text-sm font-medium hover:opacity-90 transition">
-                    Buy
-                  </button>
+                  <div className="mt-auto flex justify-center">
+                    <button className="w-[236px] h-[40px] bg-[#542452] text-white text-sm font-medium rounded-[24px] hover:opacity-90 transition">
+                      Buy Now
+                    </button>
+                  </div>
                 </div>
               </Link>
             ))}
