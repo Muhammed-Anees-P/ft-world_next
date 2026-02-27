@@ -96,7 +96,7 @@ export default function ProductsSection() {
                 href={`/product/${product.slug}`}
                 className="group"
               >
-                <div className="w-[276px] h-[409px] bg-white rounded-[15px] px-[20px] py-[15px] flex flex-col gap-[12px] border border-gray-100">
+                <div className="w-[276px] h-[350px] bg-white rounded-[15px] px-[20px] py-[15px] flex flex-col gap-[12px] border border-gray-100">
                   {/* Image */}
                   <div className="relative w-full h-[170px] flex items-center justify-center">
                     <div className="absolute inset-0">
