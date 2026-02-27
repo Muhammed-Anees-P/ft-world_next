@@ -3,9 +3,102 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRegisterMutation } from "@/hooks/useRegisterMutation";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function Signup() {
   const [type, setType] = useState<"person" | "company">("person");
+  const router = useRouter();
+
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: "",
+    // address: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [errors, setErrors] = useState<any>({});
+
+  const { mutate, isPending } = useRegisterMutation();
+
+  const validate = () => {
+    const newErrors: any = {};
+
+    if (!form.firstName.trim()) newErrors.firstName = "First name is required";
+    if (!form.lastName.trim()) newErrors.lastName = "Last name is required";
+    if (!form.phone.trim()) newErrors.phone = "Phone is required";
+    // if (!form.address.trim()) newErrors.address = "Address is required";
+
+    if (!form.email.trim()) {
+      newErrors.email = "Email is required";
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(form.email)) {
+        newErrors.email = "Invalid email format";
+      }
+    }
+
+    if (!form.password) {
+      newErrors.password = "Password is required";
+    } else if (form.password.length < 6) {
+      newErrors.password = "Minimum 6 characters";
+    }
+
+    if (!form.confirmPassword) {
+      newErrors.confirmPassword = "Confirm your password";
+    } else if (form.password !== form.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setForm((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+
+    // Remove error while typing
+    setErrors((prev: any) => ({
+      ...prev,
+      [e.target.name]: "",
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validate()) return;
+
+    mutate(
+      {
+        firstName: form.firstName,
+        lastName: form.lastName,
+        phone: form.phone,
+        email: form.email,
+        // address: form.address,
+        password: form.password,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Registered & Logged in successfully");
+          router.push("/");
+        },
+        onError: (error: any) => {
+          toast.error(error?.response?.data?.message || "Registration failed");
+        },
+      },
+    );
+  };
 
   return (
     <main className="w-full min-h-screen bg-[white] flex items-center justify-center">
@@ -16,27 +109,25 @@ export default function Signup() {
         {/* ================= LEFT SIDE ================= */}
         <div className="w-1/2 bg-[#FAFAFA] flex items-center justify-center">
           <div className="w-[450px]">
-            {/* Heading */}
             <h2 className="text-[28px] font-semibold text-center">Sign Up</h2>
 
-            {/* Toggle */}
             <div className="flex justify-center gap-2 mt-2 text-sm">
               <button
                 onClick={() => setType("person")}
-                className={`${
+                className={
                   type === "person" ? "text-black font-medium" : "text-gray-400"
-                }`}
+                }
               >
                 Person
               </button>
               <span className="text-gray-400">/</span>
               <button
                 onClick={() => setType("company")}
-                className={`${
+                className={
                   type === "company"
                     ? "text-black font-medium"
                     : "text-gray-400"
-                }`}
+                }
               >
                 Company
               </button>
@@ -44,54 +135,91 @@ export default function Signup() {
 
             {/* ================= PERSON FORM ================= */}
             {type === "person" && (
-              <form className="mt-8 space-y-4">
+              <form onSubmit={handleSubmit} className="mt-8 space-y-4">
                 <div className="flex gap-4">
                   <input
-                    type="text"
+                    name="firstName"
+                    value={form.firstName}
+                    onChange={handleChange}
                     placeholder="Enter your first name"
-                    className="w-1/2 inputStyle"
+                    className={`w-1/2 inputStyle ${
+                      errors.firstName ? "border-red-500" : ""
+                    }`}
                   />
+
                   <input
-                    type="text"
+                    name="lastName"
+                    value={form.lastName}
+                    onChange={handleChange}
                     placeholder="Second name"
-                    className="w-1/2 inputStyle"
+                    className={`w-1/2 inputStyle ${
+                      errors.lastName ? "border-red-500" : ""
+                    }`}
                   />
                 </div>
 
                 <input
-                  type="text"
+                  name="phone"
+                  value={form.phone}
+                  onChange={handleChange}
                   placeholder="Enter your phone no."
-                  className="w-full inputStyle"
+                  className={`w-full inputStyle ${
+                    errors.phone ? "border-red-500" : ""
+                  }`}
                 />
 
                 <input
-                  type="email"
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
                   placeholder="Enter your Email"
-                  className="w-full inputStyle"
+                  className={`w-full inputStyle ${
+                    errors.email ? "border-red-500" : ""
+                  }`}
                 />
 
-                <textarea
+                {/* <textarea
+                  name="address"
+                  value={form.address}
+                  onChange={handleChange}
                   rows={2}
                   placeholder="Enter your Address"
-                  className="w-full inputStyle"
-                />
+                  className={`w-full inputStyle ${
+                    errors.address ? "border-red-500" : ""
+                  }`}
+                /> */}
 
                 <input
+                  name="password"
                   type="password"
+                  value={form.password}
+                  onChange={handleChange}
                   placeholder="Enter your password"
-                  className="w-full inputStyle"
+                  className={`w-full inputStyle ${
+                    errors.password ? "border-red-500" : ""
+                  }`}
                 />
 
                 <input
+                  name="confirmPassword"
                   type="password"
+                  value={form.confirmPassword}
+                  onChange={handleChange}
                   placeholder="Confirm password"
-                  className="w-full inputStyle"
+                  className={`w-full inputStyle ${
+                    errors.confirmPassword ? "border-red-500" : ""
+                  }`}
                 />
 
-                <button className="submitBtn">Create Account</button>
+                <button
+                  type="submit"
+                  disabled={isPending}
+                  className="submitBtn"
+                >
+                  {isPending ? "Creating..." : "Create Account"}
+                </button>
               </form>
             )}
-
             {/* ================= COMPANY FORM ================= */}
             {type === "company" && (
               <form className="mt-8 space-y-4">
@@ -193,7 +321,6 @@ export default function Signup() {
         </div>
       </div>
 
-      {/* ===== Shared Styles ===== */}
       <style jsx>{`
         .inputStyle {
           border: 1px solid #d1d5db;
@@ -221,6 +348,11 @@ export default function Signup() {
 
         .submitBtn:hover {
           opacity: 0.95;
+        }
+
+        .submitBtn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
         }
       `}</style>
     </main>
