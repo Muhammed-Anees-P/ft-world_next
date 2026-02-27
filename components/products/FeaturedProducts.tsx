@@ -3,171 +3,128 @@
 import Image from "next/image";
 import Container from "../Container";
 
-interface Product {
-  id: number;
-  title: string;
-  description?: string;
-  image?: string;
-  backgroundImage?: string;
-  button?: string;
-}
-
-const products: Product[] = [
-  {
-    id: 1,
-    title: "Develop Ineo 224e",
-    description:
-      "Develop Ineo 224e is a high-performance A4 multifunction printer designed to deliver exceptional print quality and operational efficiency.",
-    image: "/printer1.png",
-    backgroundImage: "/bg-printer1.jpg",
-    button: "Learn more",
-  },
-  {
-    id: 2,
-    title: "POSIFLOW PSF–11",
-    description: "All-in-One Wireless Monochrome Laser Printer",
-    image: "/printer2.png",
-    backgroundImage: "/bg-printer2.jpg",
-    button: "Learn more",
-  },
-  {
-    id: 3,
-    title: "POSIFLOW PSF–11",
-    image: "/pos.png",
-    backgroundImage: "/bg-pos.jpg",
-    button: "Learn more",
-  },
-];
-
 export default function FeaturProducts() {
-  const [large, tall, wide] = products;
-
-  const cardBase = "relative overflow-hidden bg-white rounded-[40px] shadow-sm";
-
-  const renderBackground = (bg?: string) =>
-    bg ? (
-      <>
-        <Image src={bg} alt="background" fill className="object-cover z-0" />
-        <div className="absolute inset-0 bg-white/80 backdrop-blur-[1px] z-0" />
-      </>
-    ) : null;
-
   return (
-    <section className="w-full bg-[#FFFFFF] py-16">
+    <section className="w-full py-[70px] bg-white h-[600px]">
       <Container>
-        <div className="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-[280px_200px]] gap-6">
-          {/* ================= LARGE ================= */}
-          <div className={`lg:col-span-2 p-10 flex items-center ${cardBase}`}>
-            {renderBackground(large.backgroundImage)}
+        {/* MAIN WRAPPER */}
+        <div className="w-full bg-[#D8D8D8] rounded-[20px] px-[40px] py-[20px] flex items-center justify-between">
+          {/* ================= LEFT CONTENT ================= */}
+          <div className="w-[520px] flex flex-col justify-between h-[500px]">
+            {/* Heading + Description */}
+            <div className="mt-15">
+              <h2 className="text-[40px] font-semibold leading-[1.15] text-black mb-8">
+                Smart Technology <br />
+                for Seamless <br />
+                Business Operations
+              </h2>
 
-            <div className="relative z-10 grid md:grid-cols-2 gap-8 w-full items-center">
-              <div>
-                <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                  {large.title}
-                </h2>
+              <p className="text-[14px] text-gray-600 max-w-[420px] ">
+                Enhance your business with our cutting-edge POS systems,
+                multifunction printers, and security solutions.
+              </p>
+            </div>
 
-                {large.description && (
-                  <p className="text-gray-600 text-sm leading-relaxed mb-6 max-w-md">
-                    {large.description}
-                  </p>
-                )}
+            {/* Bottom Actions */}
+            <div className="flex flex-col gap-15">
+              {/* Talk With Expert */}
+              <div
+                className="w-[400px] h-[78px] px-[22px] 
+              bg-gradient-to-r from-[#CECECE] to-[#B4B4B4] 
+              rounded-[30px] flex items-center justify-between"
+              >
+                <div className="flex items-center -space-x-3">
+                  <div className="w-9 h-9 rounded-full bg-gray-300 border-2 border-white" />
+                  <div className="w-9 h-9 rounded-full bg-gray-400 border-2 border-white" />
+                  <div className="w-9 h-9 rounded-full bg-gray-500 border-2 border-white" />
+                </div>
 
-                {large.button && (
-                  <button className="px-6 py-2 text-sm text-white rounded-lg bg-linear-to-r from-purple-500 to-purple-700">
-                    {large.button}
-                  </button>
-                )}
+                <span className="text-sm font-medium text-black">
+                  Talk With Our Expert
+                </span>
+
+                <div
+                  className="w-8 h-8 flex items-center justify-center bg-white shadow-sm"
+                  style={{ borderRadius: "10px" }}
+                >
+                  →
+                </div>
               </div>
 
-              {large.image && (
-                <div className="relative flex justify-end">
-                  <div className="absolute bottom-6 right-6 w-96 h-28 bg-gray-300 rounded-full blur-3xl opacity-60"></div>
-                  <Image
-                    src={large.image}
-                    alt={large.title}
-                    width={420}
-                    height={300}
-                    className="relative z-10 object-contain"
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* ================= TALL (row-span-2) ================= */}
-          <div
-            className={`lg:row-span-2 p-6 flex flex-col justify-between ${cardBase}`}
-          >
-            {renderBackground(tall.backgroundImage)}
-
-            <div className="relative z-10 flex flex-col h-full justify-between">
-              {tall.image && (
-                <div className="relative flex justify-center mt-6">
-                  <div className="absolute bottom-6 w-72 h-5 bg-gray-300 rounded-full blur-3xl opacity-60"></div>
-                  <Image
-                    src={tall.image}
-                    alt={tall.title}
-                    width={300}
-                    height={220}
-                    className="relative z-10 object-contain"
-                    style={{
-                      marginTop: "80px",
-                    }}
-                  />
-                </div>
-              )}
-
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800">
-                  {tall.title}
-                </h3>
-
-                {tall.description && (
-                  <p className="text-gray-600 text-sm mt-2 mb-4">
-                    {tall.description}
-                  </p>
-                )}
-
-                {tall.button && (
-                  <button className="w-full px-4 py-2 text-sm text-white rounded-lg bg-linear-to-r from-purple-500 to-purple-700">
-                    {tall.button}
-                  </button>
-                )}
+              {/* Learn More */}
+              <div style={{ marginBottom: "20px" }}>
+                <button
+                  className="w-[160px] h-[42px] rounded-[8px] text-white text-sm font-medium bg-[#542452]"
+                  style={{ marginTop: "10px" }}
+                >
+                  Learn More
+                </button>
               </div>
             </div>
           </div>
 
-          {/* ================= WIDE ================= */}
-          <div
-            className={`lg:col-span-2 p-8 flex items-center justify-between ${cardBase}`}
-          >
-            {renderBackground(wide.backgroundImage)}
+          {/* ================= RIGHT PRODUCT GROUP ================= */}
+          <div className="flex gap-[20px]">
+            {/* PRODUCT 1 */}
+            <div className="w-[300px] h-[450px] bg-white rounded-[20px] p-[30px] flex flex-col justify-between">
+              <span className="text-xs bg-white px-3 py-1 rounded-full shadow-sm w-fit">
+                Develop Ineo 224 ₹1,54,900
+              </span>
 
-            <div className="relative z-10 flex items-center justify-between w-full">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                  {wide.title}
-                </h3>
-
-                {wide.button && (
-                  <button className="px-6 py-2 text-sm text-white rounded-lg bg-linear-to-r from-purple-500 to-purple-700">
-                    {wide.button}
-                  </button>
-                )}
+              <div className="flex justify-center items-center flex-1">
+                <Image
+                  src="/printer1.png"
+                  alt="Printer"
+                  width={280}
+                  height={380}
+                  className="object-contain"
+                />
               </div>
 
-              {wide.image && (
-                <div className="relative flex justify-end">
-                  <div className="absolute bottom-6 right-6 w-72 h-20 bg-gray-300 rounded-full blur-3xl opacity-60"></div>
+              <div className="flex justify-end">
+                <div className="w-9 h-9 rounded-full bg-white shadow flex items-center justify-center">
+                  →
+                </div>
+              </div>
+            </div>
+
+            {/* RIGHT COLUMN */}
+            <div className="flex flex-col gap-[20px]">
+              {/* PRODUCT 2 */}
+              <div className="w-[220px] h-[230px] bg-white rounded-[20px] p-[26px] flex flex-col justify-between">
+                <span className="text-xs bg-white px-3 py-1 rounded-full shadow-sm w-fit">
+                  POSIFLOW PSF–11 ₹1,54,900
+                </span>
+
+                <div className="flex justify-center items-center flex-1">
                   <Image
-                    src={wide.image}
-                    alt={wide.title}
-                    width={280}
+                    src="/pos.png"
+                    alt="POS"
+                    width={200}
                     height={200}
-                    className="relative z-10 object-contain"
+                    className="object-contain"
                   />
                 </div>
-              )}
+
+                <div className="flex justify-end">
+                  <div className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center">
+                    →
+                  </div>
+                </div>
+              </div>
+
+              {/* PRODUCT 3 */}
+              <div className="w-[220px] h-[200px] bg-white rounded-[20px] p-[24px] flex flex-col justify-center items-center text-center">
+                <h3 className="text-lg font-semibold mb-2">20% OFF</h3>
+
+                <p className="text-sm text-gray-600 mb-4">
+                  On Annual Maintenance Contracts
+                </p>
+
+                <button className="px-6 py-2 rounded-[8px] text-white text-sm font-medium bg-[#542452]">
+                  Explore Now
+                </button>
+              </div>
             </div>
           </div>
         </div>
