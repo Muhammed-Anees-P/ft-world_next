@@ -47,8 +47,7 @@ export const useValueForMoneyProductListQuery = () =>
     queryFn: listValeuForMoneyProducts,
   });
 
-
-  export const useListProductsForUser = () =>
+export const useListProductsForUser = () =>
   queryOptions({
     queryKey: ["users-products"],
     queryFn: listProductsForUser,
