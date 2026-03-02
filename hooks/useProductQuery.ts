@@ -3,6 +3,7 @@ import AXIOS from "@/lib/axios";
 import { useProductStore } from "@/store/productStore";
 import { useEffect } from "react";
 import {
+  getProductById,
   listOfferProducts,
   listProductsForUser,
   listSuggestedProducts,
@@ -67,3 +68,11 @@ export const useListProductsForUserByCategory = (categoryId?: string) =>
       return res.data;
     },
   });
+
+export const useProductByIdQuery = (id: string) => {
+  return useQuery({
+    queryKey: ["product-single-get", id],
+    queryFn: () => getProductById(id),
+    enabled: !!id,
+  });
+};
