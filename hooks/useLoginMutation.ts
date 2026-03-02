@@ -10,7 +10,7 @@ export const useLoginMutation = () => {
     mutationFn: loginUser,
 
     onSuccess: (data) => {
-      setAuth(data.access_token);
+      setAuth(data.access_token, data.user);
     },
   });
 };
