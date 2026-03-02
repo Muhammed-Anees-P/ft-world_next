@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import {
   Search,
   User,
@@ -11,7 +12,6 @@ import {
   X,
   Headphones,
   LayoutGrid,
-  LogOut,
 } from "lucide-react";
 import Container from "./Container";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -20,6 +20,30 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const closeTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
+  const initializeAuth = useAuthStore((state) => state.initializeAuth);
+
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
+
+  const handleProtectedRoute = (path: string) => {
+    if (!user) {
+      router.push(`/login?redirect=${pathname}`);
+    } else {
+      router.push(path);
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+  };
 
   const [searchText, setSearchText] = useState("");
 
@@ -32,21 +56,6 @@ export default function Navbar() {
   const [currentText, setCurrentText] = useState("");
   const [index, setIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  /* ================= AUTH STORE ================= */
-  const user = useAuthStore((state) => state.user);
-  const logout = useAuthStore((state) => state.logout);
-  const initializeAuth = useAuthStore((state) => state.initializeAuth);
-
-  /* Initialize auth on mount */
-  useEffect(() => {
-    initializeAuth();
-  }, [initializeAuth]);
-
-  const handleLogout = () => {
-    logout();
-    window.location.reload();
-  };
 
   /* ================= TYPEWRITER ================= */
   useEffect(() => {
@@ -126,7 +135,6 @@ export default function Navbar() {
 
         {/* RIGHT ICON GROUP */}
         <div className="hidden md:flex items-center flex-shrink-0 gap-3.5">
-          {/* CATEGORY */}
           <Link
             href="/categories"
             className="w-10 h-10 rounded-full bg-[#5B2758] flex items-center justify-center text-white hover:opacity-95 transition"
@@ -134,7 +142,6 @@ export default function Navbar() {
             <LayoutGrid size={16} />
           </Link>
 
-          {/* SUPPORT */}
           <Link
             href="/support"
             className="w-10 h-10 rounded-full bg-[#5B2758] flex items-center justify-center text-white hover:opacity-95 transition"
@@ -142,7 +149,6 @@ export default function Navbar() {
             <Headphones size={16} />
           </Link>
 
-          {/* CART */}
           <Link
             href="/cart"
             className="w-10 h-10 rounded-full bg-[#5B2758] flex items-center justify-center text-white hover:opacity-95 transition"
@@ -162,54 +168,54 @@ export default function Navbar() {
 
             {activeDropdown === "user" && (
               <div className="absolute right-0 mt-3 w-48 bg-[#D9D9D9] rounded-xl shadow-lg py-3 animate-dropdown z-50">
-                {!user ? (
-                  <Link
-                    href="/login"
-                    className="block px-4 py-2 hover:bg-gray-200 text-sm"
+                {!user && (
+                  <button
+                    onClick={() => handleProtectedRoute("/profile")}
+                    className="block w-full text-left px-4 py-2 hover:bg-gray-200 text-sm"
                   >
                     Login
-                  </Link>
-                ) : (
-                  <>
-                    <div className="px-4 py-2 border-b text-sm font-medium">
-                      {user.firstName} {user.lastName}
-                    </div>
+                  </button>
+                )}
 
-                    <Link
-                      href="/profile"
-                      className="block px-4 py-2 hover:bg-gray-200 text-sm"
-                    >
-                      My Profile
-                    </Link>
+                {user && (
+                  <div className="px-4 py-2 border-b text-sm font-medium">
+                    {user.firstName} {user.lastName}
+                  </div>
+                )}
 
-                    <Link
-                      href="/orders"
-                      className="block px-4 py-2 hover:bg-gray-200 text-sm"
-                    >
-                      Orders
-                    </Link>
+                <button
+                  onClick={() => handleProtectedRoute("/profile")}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-200 text-sm"
+                >
+                  My Profile
+                </button>
 
-                    <Link
-                      href="/wishlist"
-                      className="block px-4 py-2 hover:bg-gray-200 text-sm"
-                    >
-                      Wishlist
-                    </Link>
+                <button
+                  onClick={() => handleProtectedRoute("/orders")}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-200 text-sm"
+                >
+                  Orders
+                </button>
 
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-200 text-sm text-red-600 flex items-center gap-2"
-                    >
-                      <LogOut size={14} />
-                      Logout
-                    </button>
-                  </>
+                <button
+                  onClick={() => handleProtectedRoute("/wishlist")}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-200 text-sm"
+                >
+                  Wishlist
+                </button>
+
+                {user && (
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 hover:bg-gray-200 text-sm text-red-600"
+                  >
+                    Logout
+                  </button>
                 )}
               </div>
             )}
           </div>
 
-          {/* DIVIDER */}
           <div className=" mx-8" />
 
           {/* HAMBURGER */}
@@ -258,35 +264,49 @@ export default function Navbar() {
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-gray-200">
           <Container className="py-4 space-y-4">
-            {!user ? (
-              <Link href="/login" className="block py-2 text-[#542452]">
+            {!user && (
+              <button
+                onClick={() => handleProtectedRoute("/profile")}
+                className="block w-full text-left py-2 text-[#542452]"
+              >
                 Login
-              </Link>
-            ) : (
-              <>
-                <div className="text-sm font-medium">
-                  {user.firstName} {user.lastName}
-                </div>
+              </button>
+            )}
 
-                <Link href="/profile" className="block py-2 text-[#542452]">
-                  My Profile
-                </Link>
+            {user && (
+              <div className="text-sm font-medium">
+                {user.firstName} {user.lastName}
+              </div>
+            )}
 
-                <Link href="/orders" className="block py-2 text-[#542452]">
-                  Orders
-                </Link>
+            <button
+              onClick={() => handleProtectedRoute("/profile")}
+              className="block w-full text-left py-2 text-[#542452]"
+            >
+              My Profile
+            </button>
 
-                <Link href="/wishlist" className="block py-2 text-[#542452]">
-                  Wishlist
-                </Link>
+            <button
+              onClick={() => handleProtectedRoute("/orders")}
+              className="block w-full text-left py-2 text-[#542452]"
+            >
+              Orders
+            </button>
 
-                <button
-                  onClick={handleLogout}
-                  className="block py-2 text-red-600"
-                >
-                  Logout
-                </button>
-              </>
+            <button
+              onClick={() => handleProtectedRoute("/wishlist")}
+              className="block w-full text-left py-2 text-[#542452]"
+            >
+              Wishlist
+            </button>
+
+            {user && (
+              <button
+                onClick={handleLogout}
+                className="block py-2 text-red-600"
+              >
+                Logout
+              </button>
             )}
 
             <Link href="/cart" className="block py-2 text-[#542452]">
