@@ -39,3 +39,8 @@ export const listProductsForUser = async () => {
   const res = await AXIOS.get("/products/users");
   return res.data;
 };
+
+export const getProductById = async (id: string) => {
+  const res = await AXIOS.get(`/products/${id}`);
+  return res.data.data;
+};
