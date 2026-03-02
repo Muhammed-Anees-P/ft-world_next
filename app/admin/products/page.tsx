@@ -98,7 +98,7 @@ export default function ProductsPage() {
                     </Link>
 
                     <button
-                      onClick={() => handleDelete(p._id)}
+                      onClick={() => handleDelete(p._id!)}
                       className="text-red-500"
                     >
                       <Trash2 size={18} />
