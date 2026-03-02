@@ -99,7 +99,7 @@ export default function SuggestedProducts() {
               >
                 {/* PRODUCT IMAGE */}
                 <Image
-                  src={product.images?.[0]}
+                  src={product?.images?.[0]}
                   alt={product.name}
                   fill
                   sizes="276px"
