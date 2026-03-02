@@ -11,8 +11,10 @@ import {
   X,
   Headphones,
   LayoutGrid,
+  LogOut,
 } from "lucide-react";
 import Container from "./Container";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -30,6 +32,21 @@ export default function Navbar() {
   const [currentText, setCurrentText] = useState("");
   const [index, setIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  /* ================= AUTH STORE ================= */
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
+  const initializeAuth = useAuthStore((state) => state.initializeAuth);
+
+  /* Initialize auth on mount */
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
+
+  const handleLogout = () => {
+    logout();
+    window.location.reload();
+  };
 
   /* ================= TYPEWRITER ================= */
   useEffect(() => {
@@ -145,30 +162,49 @@ export default function Navbar() {
 
             {activeDropdown === "user" && (
               <div className="absolute right-0 mt-3 w-48 bg-[#D9D9D9] rounded-xl shadow-lg py-3 animate-dropdown z-50">
-                <Link
-                  href="/login"
-                  className="block px-4 py-2 hover:bg-gray-200 text-sm"
-                >
-                  Login
-                </Link>
-                <Link
-                  href="/profile"
-                  className="block px-4 py-2 hover:bg-gray-200 text-sm"
-                >
-                  My Profile
-                </Link>
-                <Link
-                  href="/orders"
-                  className="block px-4 py-2 hover:bg-gray-200 text-sm"
-                >
-                  Orders
-                </Link>
-                <Link
-                  href="/wishlist"
-                  className="block px-4 py-2 hover:bg-gray-200 text-sm"
-                >
-                  Wishlist
-                </Link>
+                {!user ? (
+                  <Link
+                    href="/login"
+                    className="block px-4 py-2 hover:bg-gray-200 text-sm"
+                  >
+                    Login
+                  </Link>
+                ) : (
+                  <>
+                    <div className="px-4 py-2 border-b text-sm font-medium">
+                      {user.firstName} {user.lastName}
+                    </div>
+
+                    <Link
+                      href="/profile"
+                      className="block px-4 py-2 hover:bg-gray-200 text-sm"
+                    >
+                      My Profile
+                    </Link>
+
+                    <Link
+                      href="/orders"
+                      className="block px-4 py-2 hover:bg-gray-200 text-sm"
+                    >
+                      Orders
+                    </Link>
+
+                    <Link
+                      href="/wishlist"
+                      className="block px-4 py-2 hover:bg-gray-200 text-sm"
+                    >
+                      Wishlist
+                    </Link>
+
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 hover:bg-gray-200 text-sm text-red-600 flex items-center gap-2"
+                    >
+                      <LogOut size={14} />
+                      Logout
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -222,9 +258,37 @@ export default function Navbar() {
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-gray-200">
           <Container className="py-4 space-y-4">
-            <Link href="/login" className="block py-2 text-[#542452]">
-              Login
-            </Link>
+            {!user ? (
+              <Link href="/login" className="block py-2 text-[#542452]">
+                Login
+              </Link>
+            ) : (
+              <>
+                <div className="text-sm font-medium">
+                  {user.firstName} {user.lastName}
+                </div>
+
+                <Link href="/profile" className="block py-2 text-[#542452]">
+                  My Profile
+                </Link>
+
+                <Link href="/orders" className="block py-2 text-[#542452]">
+                  Orders
+                </Link>
+
+                <Link href="/wishlist" className="block py-2 text-[#542452]">
+                  Wishlist
+                </Link>
+
+                <button
+                  onClick={handleLogout}
+                  className="block py-2 text-red-600"
+                >
+                  Logout
+                </button>
+              </>
+            )}
+
             <Link href="/cart" className="block py-2 text-[#542452]">
               Cart
             </Link>
