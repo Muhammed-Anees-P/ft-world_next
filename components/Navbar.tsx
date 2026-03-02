@@ -150,7 +150,7 @@ export default function Navbar() {
           </Link>
 
           <Link
-            href="/cart"
+            href="/product/cart"
             className="w-10 h-10 rounded-full bg-[#5B2758] flex items-center justify-center text-white hover:opacity-95 transition"
           >
             <ShoppingCart size={16} />
