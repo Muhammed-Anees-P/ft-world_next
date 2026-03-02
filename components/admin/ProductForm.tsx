@@ -4,52 +4,11 @@ import { useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { uploadImage } from "@/services/bannerService";
 import { ICategory } from "@/types/ICategory";
-
-/* ─────────────────────────── Types ─────────────────────────── */
-
-interface ProductVariant {
-  sku: string;
-  color: string;
-  storage: string;
-  price: string;
-  originalPrice: string;
-  stock: string;
-  images: string[];
-}
-
-interface ProductAttribute {
-  name: string;
-  values: string[];
-}
-
-interface RatingBreakdown {
-  performance: number;
-  buildQuality: number;
-  valueForMoney: number;
-}
-
-interface FormState {
-  name: string;
-  slug: string;
-  description: string;
-  category: string;
-  discountPrice: string;
-  originalPrice: string;
-  stock: string;
-  warranty: string;
-  metaTitle: string;
-  metaDescription: string;
-  isActive: boolean;
-  isFeatured: boolean;
-  isSuggestedForHome: boolean;
-  isOffer: boolean;
-  offerDescription: string;
-  images: string[];
-  attributes: ProductAttribute[];
-  variants: ProductVariant[];
-  specifications: Record<string, string>;
-  ratingBreakdown: RatingBreakdown;
-}
+import {
+  IProduct,
+  IProductVariant,
+  IRatingBreakdown,
+} from "@/types/IProducts;";
 
 interface Props {
   initialData?: any;
@@ -60,7 +19,7 @@ interface Props {
 
 /* ─────────────────────────── Helpers ─────────────────────────── */
 
-const emptyVariant = (): ProductVariant => ({
+const emptyVariant = (): IProductVariant => ({
   sku: "",
   color: "",
   storage: "",
@@ -78,7 +37,7 @@ export default function ProductForm({
   onSubmit,
   isSubmitting = false,
 }: Props) {
-  const [form, setForm] = useState<FormState>({
+  const [form, setForm] = useState<IProduct>({
     name: initialData?.name || "",
     slug: initialData?.slug || "",
     description: initialData?.description || "",
@@ -209,7 +168,7 @@ export default function ProductForm({
 
   const updateVariant = (
     idx: number,
-    field: keyof ProductVariant,
+    field: keyof IProductVariant,
     value: string,
   ) => {
     setForm((prev) => {
@@ -261,7 +220,7 @@ export default function ProductForm({
     }));
 
   /* ── Toggle ── */
-  const toggle = (key: keyof FormState) =>
+  const toggle = (key: keyof IProduct) =>
     setForm((prev) => ({ ...prev, [key]: !(prev[key] as boolean) }));
 
   /* ── Submit ── */
@@ -445,10 +404,19 @@ export default function ProductForm({
                 </label>
                 <div className="relative">
                   <select
-                    value={form.category}
-                    onChange={(e) =>
-                      setForm({ ...form, category: e.target.value })
-                    }
+                    value={form.category._id}
+                    onChange={(e) => {
+                      const selectedCategory = categories.find(
+                        (cat) => cat._id === e.target.value,
+                      );
+
+                      if (!selectedCategory) return;
+
+                      setForm({
+                        ...form,
+                        category: selectedCategory,
+                      });
+                    }}
                     className={`${inp} appearance-none pr-9`}
                   >
                     <option value="">Select Category</option>
@@ -1176,7 +1144,7 @@ export default function ProductForm({
                       color: "bg-rose-500",
                     },
                   ] as {
-                    key: keyof FormState;
+                    key: keyof IProduct;
                     label: string;
                     desc: string;
                     color: string;
@@ -1240,7 +1208,7 @@ export default function ProductForm({
                     { key: "performance", label: "Performance" },
                     { key: "buildQuality", label: "Build Quality" },
                     { key: "valueForMoney", label: "Value for Money" },
-                  ] as { key: keyof RatingBreakdown; label: string }[]
+                  ] as { key: keyof IRatingBreakdown; label: string }[]
                 ).map(({ key, label: lbl3 }) => (
                   <div key={key}>
                     <div className="flex justify-between items-center mb-1.5">
