@@ -52,3 +52,18 @@ export const useListProductsForUser = () =>
     queryKey: ["users-products"],
     queryFn: listProductsForUser,
   });
+
+export const useListProductsForUserByCategory = (categoryId?: string) =>
+  queryOptions({
+    queryKey: categoryId ? ["products-by-category", categoryId] : ["products"],
+
+    queryFn: async () => {
+      if (categoryId) {
+        const res = await AXIOS.get(`/products/category/${categoryId}`);
+        return res.data;
+      }
+
+      const res = await AXIOS.get("/products");
+      return res.data;
+    },
+  });
