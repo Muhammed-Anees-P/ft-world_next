@@ -4,169 +4,208 @@ import Image from "next/image";
 import Container from "@/components/Container";
 import { Heart, ShoppingCart, Star } from "lucide-react";
 import { useState } from "react";
+import { IProduct } from "@/types/IProducts;";
 
-const relatedProducts = [
-  {
-    id: 1,
-    title: "Develop ineo 224e...",
-    image: "/printer1.png",
-    price: "1,54,900",
-    oldPrice: "1,53,900",
-    reviews: 123,
-  },
-  {
-    id: 2,
-    title: "Develop ineo 224e...",
-    image: "/printer2.png",
-    price: "1,54,900",
-    oldPrice: "1,53,900",
-    reviews: 123,
-  },
-  {
-    id: 3,
-    title: "Develop ineo 224e...",
-    image: "/printer1.png",
-    price: "1,54,900",
-    oldPrice: "1,53,900",
-    reviews: 123,
-  },
-  {
-    id: 4,
-    title: "Develop ineo 224e...",
-    image: "/printer2.png",
-    price: "1,54,900",
-    oldPrice: "1,53,900",
-    reviews: 123,
-  },
-  {
-    id: 5,
-    title: "Develop ineo 224e...",
-    image: "/printer1.png",
-    price: "1,54,900",
-    oldPrice: "1,53,900",
-    reviews: 123,
-  },
-  {
-    id: 6,
-    title: "Develop ineo 224e...",
-    image: "/printer2.png",
-    price: "1,54,900",
-    oldPrice: "1,53,900",
-    reviews: 123,
-  },
-];
+interface ProductSingleProps {
+  product: IProduct;
+}
 
-export default function ProductSinglePage() {
-  const [selectedType, setSelectedType] = useState("Black & White");
+export default function ProductSinglePage({ product }: ProductSingleProps) {
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
+  const [showAllSpecs, setShowAllSpecs] = useState(false);
 
+  const variants = product?.variants || [];
+  const selectedVariant = variants[selectedVariantIndex];
+
+  const displayImages =
+    selectedVariant?.images?.length > 0
+      ? selectedVariant.images
+      : product?.images;
+
+  const price =
+    parseInt(selectedVariant?.price) ?? parseInt(product.discountPrice);
+
+  const originalPrice =
+    parseInt(selectedVariant?.originalPrice) ??
+    parseInt(product?.originalPrice);
+
+  const stock = selectedVariant?.stock ?? product.stock;
+
+  const discountPercent =
+    originalPrice > price
+      ? Math.round(((originalPrice - price) / originalPrice) * 100)
+      : 0;
+
+  const relatedProducts = [
+    {
+      id: 1,
+      title: "Develop ineo 224e...",
+      image: "/printer1.png",
+      price: "1,54,900",
+      oldPrice: "1,53,900",
+      reviews: 123,
+    },
+    {
+      id: 2,
+      title: "Develop ineo 224e...",
+      image: "/printer2.png",
+      price: "1,54,900",
+      oldPrice: "1,53,900",
+      reviews: 123,
+    },
+    {
+      id: 3,
+      title: "Develop ineo 224e...",
+      image: "/printer1.png",
+      price: "1,54,900",
+      oldPrice: "1,53,900",
+      reviews: 123,
+    },
+    {
+      id: 4,
+      title: "Develop ineo 224e...",
+      image: "/printer2.png",
+      price: "1,54,900",
+      oldPrice: "1,53,900",
+      reviews: 123,
+    },
+    {
+      id: 5,
+      title: "Develop ineo 224e...",
+      image: "/printer1.png",
+      price: "1,54,900",
+      oldPrice: "1,53,900",
+      reviews: 123,
+    },
+    {
+      id: 6,
+      title: "Develop ineo 224e...",
+      image: "/printer2.png",
+      price: "1,54,900",
+      oldPrice: "1,53,900",
+      reviews: 123,
+    },
+  ];
   return (
     <section className="w-full bg-[#FFFFFF] py-16">
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-14">
           {/* ================= LEFT SIDE ================= */}
           <div>
-            {/* Main Image Card */}
-            <div className="relative bg-white border rounded-2xl p-10">
-              <Image
-                src="/printer1.png"
-                alt="product"
-                width={450}
-                height={550}
-                className="object-contain mx-auto"
-              />
+            <div className="relative bg-white border rounded-2xl p-6 flex items-center justify-center">
+              <div className="relative w-full max-w-[450px] h-[450px]">
+                <Image
+                  src={displayImages?.[0]}
+                  alt={product?.name}
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 768px) 100vw, 450px"
+                />
+              </div>
 
-              {/* Wishlist Icon */}
               <button className="absolute bottom-6 right-6 w-10 h-10 bg-white border rounded-lg flex items-center justify-center shadow-sm">
                 <Heart size={18} />
               </button>
             </div>
 
-            {/* Selected Color */}
-            <p className="mt-6 text-sm text-gray-700">
-              Selected Color:{" "}
-              <span className="font-medium">{selectedType}</span>
-            </p>
-
-            {/* Color Variants */}
-            <div className="flex gap-6 mt-4">
-              {["/printer1.png", "/printer2.png", "/printer1.png"].map(
-                (img, i) => (
+            {/* Variant Thumbnails */}
+            {displayImages?.length > 1 && (
+              <div className="flex gap-6 mt-6 flex-wrap">
+                {displayImages.map((img: string, i: number) => (
                   <div
                     key={i}
-                    className="w-[180px] h-[120px] border rounded-2xl p-4 bg-white flex items-center justify-center cursor-pointer hover:border-black transition"
+                    className="w-[120px] h-[120px] border rounded-xl p-3 bg-white flex items-center justify-center"
                   >
-                    <Image
-                      src={img}
-                      alt="variant"
-                      width={90}
-                      height={90}
-                      className="object-contain"
-                    />
+                    <div className="relative w-[80px] h-[80px]">
+                      <Image
+                        src={img}
+                        alt="variant"
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
                   </div>
-                ),
-              )}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* ================= RIGHT SIDE ================= */}
           <div>
             <h1 className="text-2xl font-semibold text-black">
-              Develop Ineo 224e
+              {product?.name}
             </h1>
 
             <p className="text-sm text-gray-600 mt-2 leading-relaxed">
-              A4 Colour Multifunction Printer
-              <br />
-              Develop Ineo 224e is a high-performance A4 multifunction printer
-              designed to deliver exceptional print quality and operational
-              efficiency...
+              {product?.description}
             </p>
 
             <hr className="my-6" />
 
-            {/* Type Selector */}
-            <div>
-              <p className="text-sm font-medium mb-3">Type:</p>
-              <div className="flex gap-3">
-                {["Black & White", "Color"].map((type) => (
-                  <button
-                    key={type}
-                    onClick={() => setSelectedType(type)}
-                    className={`px-6 py-2 rounded-lg border text-sm ${
-                      selectedType === type
-                        ? "border-black bg-gray-100"
-                        : "border-gray-300"
-                    }`}
-                  >
-                    {type}
-                  </button>
-                ))}
+            {/* Variant Selector */}
+            {variants?.length > 0 && (
+              <div>
+                <p className="text-sm font-medium mb-3">Variants:</p>
+
+                <div className="flex gap-3 flex-wrap">
+                  {variants.map((variant: any, index: number) => (
+                    <button
+                      key={variant.sku}
+                      onClick={() => setSelectedVariantIndex(index)}
+                      className={`px-4 py-2 rounded-lg border text-sm ${
+                        selectedVariantIndex === index
+                          ? "border-black bg-gray-100"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      {variant?.color} {variant?.storage}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             <hr className="my-6" />
 
             {/* Price Section */}
             <div className="flex items-center gap-4">
-              <span className="text-green-600 font-medium text-sm">10% ↓</span>
-              <span className="text-gray-400 line-through text-lg">
-                ₹1,53,900
-              </span>
+              {discountPercent > 0 && (
+                <span className="text-green-600 font-medium text-sm">
+                  {discountPercent}% ↓
+                </span>
+              )}
+
+              {originalPrice > price && (
+                <span className="text-gray-400 line-through text-lg">
+                  ₹{originalPrice}
+                </span>
+              )}
+
               <span className="text-2xl font-semibold text-black">
-                ₹1,54,900
+                ₹{price}
               </span>
             </div>
+
+            <p className="text-sm mt-2 text-gray-600">
+              {parseInt(stock) > 0 ? `In Stock (${stock})` : "Out of Stock"}
+            </p>
 
             <hr className="my-6" />
 
             {/* Buttons */}
             <div className="flex gap-4">
-              <button className="flex-1 border border-gray-300 rounded-lg py-3 flex items-center justify-center gap-2 text-sm font-medium hover:bg-gray-50 transition">
+              <button
+                disabled={parseInt(stock) === 0}
+                className="flex-1 border border-gray-300 rounded-lg py-3 flex items-center justify-center gap-2 text-sm font-medium hover:bg-gray-50 transition disabled:opacity-50"
+              >
                 <ShoppingCart size={16} />
                 Add To Cart
               </button>
 
-              <button className="flex-1 bg-[#542452] text-white rounded-lg py-3 text-sm font-medium hover:opacity-95 transition">
+              <button
+                disabled={parseInt(stock) === 0}
+                className="flex-1 bg-[#542452] text-white rounded-lg py-3 text-sm font-medium hover:opacity-95 transition disabled:opacity-50"
+              >
                 Buy Now
               </button>
             </div>
@@ -174,13 +213,63 @@ export default function ProductSinglePage() {
             <hr className="my-6" />
 
             {/* Warranty */}
-            <div>
-              <p className="text-sm font-medium mb-3">Grantee / warranty</p>
-              <div className="bg-gray-100 rounded-lg py-3 text-center text-sm text-gray-700">
-                1 Year Limited Warranty
-              </div>
-            </div>
+            {product?.warranty && (
+              <>
+                <p className="text-sm font-medium mb-3">Warranty</p>
+                <div className="bg-gray-100 rounded-lg py-3 text-center text-sm text-gray-700">
+                  {product.warranty} Year Warranty
+                </div>
+              </>
+            )}
 
+            {/* ================= SPECIFICATIONS ================= */}
+            {product?.specifications &&
+              Object.keys(product.specifications).length > 0 && (
+                <>
+                  <hr className="my-6" />
+
+                  <div>
+                    <p className="text-sm font-medium mb-4">Specifications</p>
+
+                    {(() => {
+                      const specs = Object.entries(product.specifications);
+
+                      const visibleSpecs = showAllSpecs
+                        ? specs
+                        : specs.slice(0, 6);
+
+                      return (
+                        <>
+                          <div className="space-y-4">
+                            {visibleSpecs.map(([key, value], index) => (
+                              <div key={index}>
+                                <p className="text-sm font-semibold text-black">
+                                  ▪️ {key}
+                                </p>
+                                <p className="text-sm text-gray-600 mt-1">
+                                  {value}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Show More / Show Less Button */}
+                          {specs.length > 6 && (
+                            <button
+                              onClick={() => setShowAllSpecs(!showAllSpecs)}
+                              className="mt-4 text-sm font-medium text-[#542452] hover:underline transition"
+                            >
+                              {showAllSpecs
+                                ? "Show Less"
+                                : `Show More (${specs.length - 6} more)`}
+                            </button>
+                          )}
+                        </>
+                      );
+                    })()}
+                  </div>
+                </>
+              )}
             <hr className="my-6" />
 
             {/* Rating Section */}
@@ -195,22 +284,35 @@ export default function ProductSinglePage() {
                     className="fill-yellow-400 text-yellow-400"
                   />
                 ))}
-                <span className="text-sm text-gray-600">4.8 (123 reviews)</span>
+                <span className="text-sm text-gray-600">
+                  {product?.averageRating} ({product?.totalReviews} reviews)
+                </span>
               </div>
 
               <div className="flex gap-3 flex-wrap">
-                {[
-                  "performance 4.7",
-                  "build quality 4.7",
-                  "value for money 4.7",
-                ].map((tag, i) => (
-                  <div
-                    key={i}
-                    className="bg-gray-100 px-4 py-2 rounded-full text-xs text-gray-700"
-                  >
-                    {tag}
-                  </div>
-                ))}
+                {Object.entries(product?.ratingBreakdown || {}).map(
+                  ([key, value]) => (
+                    <div
+                      key={key}
+                      className="flex items-center gap-1.5 bg-[#f3f3f3] px-4 py-2 rounded-full text-xs font-medium capitalize"
+                    >
+                      <span>
+                        {key === "buildQuality"
+                          ? "Build Quality"
+                          : key === "valueForMoney"
+                            ? "Value for Money"
+                            : key}
+                      </span>
+
+                      <Star
+                        size={12}
+                        className="fill-green-500 text-green-500"
+                      />
+
+                      <span>{value}</span>
+                    </div>
+                  ),
+                )}
               </div>
             </div>
           </div>
