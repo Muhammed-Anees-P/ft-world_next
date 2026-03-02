@@ -75,7 +75,7 @@ export default function ProductsSection() {
               products.map((product) => (
                 <Link
                   key={product._id}
-                  href={`/product/${product.slug}`}
+                  href={`/product/${product.slug}/${product._id}`}
                   className="group"
                 >
                   <div className="w-[276px] h-[350px] bg-white rounded-[15px] px-[20px] py-[15px] flex flex-col gap-[12px] border border-gray-100 hover:shadow-md transition">
@@ -113,10 +113,12 @@ export default function ProductsSection() {
 
                     <div className="mt-auto flex justify-center">
                       <button
-                        disabled={product.stock === 0}
+                        disabled={parseInt(product.stock) === 0}
                         className="w-[236px] h-[40px] bg-[#542452] text-white text-sm font-medium rounded-[24px] hover:opacity-90 transition disabled:opacity-50"
                       >
-                        {product.stock === 0 ? "Out of Stock" : "Buy Now"}
+                        {parseInt(product.stock) === 0
+                          ? "Out of Stock"
+                          : "Buy Now"}
                       </button>
                     </div>
                   </div>
