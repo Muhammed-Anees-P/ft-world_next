@@ -4,15 +4,24 @@ import Image from "next/image";
 import Container from "@/components/Container";
 import { Heart, ShoppingCart, Star } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { IProduct } from "@/types/IProducts;";
+import { useAddToCartMutation } from "@/hooks/useCartService";
+import { useAuthStore } from "@/store/useAuthStore";
+import toast from "react-hot-toast";
 
 interface ProductSingleProps {
   product: IProduct;
 }
 
 export default function ProductSinglePage({ product }: ProductSingleProps) {
+  const router = useRouter();
+
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [showAllSpecs, setShowAllSpecs] = useState(false);
+
+  const { mutate: addToCart, isPending } = useAddToCartMutation();
+  const { accessToken } = useAuthStore();
 
   const variants = product?.variants || [];
   const selectedVariant = variants[selectedVariantIndex];
@@ -35,6 +44,40 @@ export default function ProductSinglePage({ product }: ProductSingleProps) {
     originalPrice > price
       ? Math.round(((originalPrice - price) / originalPrice) * 100)
       : 0;
+
+  const handleAddToCart = () => {
+    if (!accessToken) {
+      router.push(`/login?redirect=/product/${product.slug}/${product._id}`);
+      return;
+    }
+
+    addToCart({
+      productId: product._id!,
+      variantSku: selectedVariant?.sku || null,
+      quantity: 1,
+    });
+    toast.success("Product added to cart");
+  };
+
+  const handleBuyNow = () => {
+    if (!accessToken) {
+      router.push(`/login?redirect=/product/${product.slug}/${product._id}`);
+      return;
+    }
+
+    addToCart(
+      {
+        productId: product._id!,
+        variantSku: selectedVariant?.sku || null,
+        quantity: 1,
+      },
+      {
+        onSuccess: () => {
+          router.push("/cart");
+        },
+      },
+    );
+  };
 
   const relatedProducts = [
     {
@@ -86,6 +129,7 @@ export default function ProductSinglePage({ product }: ProductSingleProps) {
       reviews: 123,
     },
   ];
+
   return (
     <section className="w-full bg-[#FFFFFF] py-16">
       <Container>
@@ -108,7 +152,6 @@ export default function ProductSinglePage({ product }: ProductSingleProps) {
               </button>
             </div>
 
-            {/* Variant Thumbnails */}
             {displayImages?.length > 1 && (
               <div className="flex gap-6 mt-6 flex-wrap">
                 {displayImages.map((img: string, i: number) => (
@@ -142,7 +185,6 @@ export default function ProductSinglePage({ product }: ProductSingleProps) {
 
             <hr className="my-6" />
 
-            {/* Variant Selector */}
             {variants?.length > 0 && (
               <div>
                 <p className="text-sm font-medium mb-3">Variants:</p>
@@ -195,15 +237,17 @@ export default function ProductSinglePage({ product }: ProductSingleProps) {
             {/* Buttons */}
             <div className="flex gap-4">
               <button
+                onClick={handleAddToCart}
                 disabled={parseInt(stock) === 0}
                 className="flex-1 border border-gray-300 rounded-lg py-3 flex items-center justify-center gap-2 text-sm font-medium hover:bg-gray-50 transition disabled:opacity-50"
               >
                 <ShoppingCart size={16} />
-                Add To Cart
+                {isPending ? "Adding..." : "Add To Cart"}
               </button>
 
               <button
-                disabled={parseInt(stock) === 0}
+                onClick={handleBuyNow}
+                disabled={parseInt(stock) === 0 || isPending}
                 className="flex-1 bg-[#542452] text-white rounded-lg py-3 text-sm font-medium hover:opacity-95 transition disabled:opacity-50"
               >
                 Buy Now
