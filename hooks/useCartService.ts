@@ -76,8 +76,7 @@ export const useUpdateCart = () => {
   const setCart = useCartStore((s) => s.setCart);
 
   return useMutation({
-    mutationFn: (data: UpdateCartPayload) =>
-      AXIOS.patch("/cart/update", data),
+    mutationFn: (data: UpdateCartPayload) => AXIOS.patch("/cart/update", data),
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
 
